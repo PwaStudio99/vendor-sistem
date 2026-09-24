@@ -15,8 +15,6 @@
 
     <!-- ============================================================
          PWA — MANIFEST + IKON (INLINE)
-         Manifest dijana secara automatik guna Blob URL.
-         Ikon = SVG Data URI (tiada fail PNG diperlukan).
          ============================================================ -->
     <link rel="manifest" id="pwa-manifest">
 
@@ -35,7 +33,6 @@
       // PWA MANIFEST — DIJANA SECARA AUTOMATIK (tiada manifest.json)
       // ═══════════════════════════════════════════════════════════════
       (function injectPWAManifest() {
-        // ---- Ikon SVG inline (boleh tukar warna/teks ikut suka) ----
         const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
           <defs>
             <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
@@ -325,7 +322,6 @@
                     <h1 class="header-title" id="page-title">Dashboard</h1>
                 </div>
                 <div class="user-profile">
-                    <!-- ⭐ BUTANG INSTALL PWA -->
                     <button class="btn btn-primary btn-sm" id="install-btn" title="Install App">
                         ⬇️ Install
                     </button>
@@ -656,57 +652,31 @@
             }
         };
 
-        // SEED DATA
-        const SEED_VENDORS = [
-            { id: 'VND-001', name: 'Vendor A (Bakery & Snacks)', contact: '012-3456789' },
-            { id: 'VND-002', name: 'Vendor B (Sandwich & Fast Food)', contact: '019-8765432' },
-            { id: 'VND-003', name: 'Vendor C (Beverages & Cafe)', contact: '017-1122334' }
-        ];
-
-        const SEED_ITEMS = [
-            { id: 'ITM-001', vendorId: 'VND-001', name: 'Chocolate Donut', category: 'Donut', price: 4.00, quantityReceived: 50, quantitySold: 0, remainingQuantity: 50, lowStockLevel: 10 },
-            { id: 'ITM-002', vendorId: 'VND-001', name: 'Strawberry Donut', category: 'Donut', price: 4.50, quantityReceived: 40, quantitySold: 0, remainingQuantity: 40, lowStockLevel: 10 },
-            { id: 'ITM-003', vendorId: 'VND-001', name: 'Vanilla Donut', category: 'Donut', price: 4.00, quantityReceived: 30, quantitySold: 0, remainingQuantity: 30, lowStockLevel: 5 },
-            { id: 'ITM-004', vendorId: 'VND-002', name: 'Chicken Sandwich', category: 'Sandwich', price: 6.50, quantityReceived: 40, quantitySold: 0, remainingQuantity: 40, lowStockLevel: 8 },
-            { id: 'ITM-005', vendorId: 'VND-003', name: 'Mineral Water 500ml', category: 'Drinks', price: 2.00, quantityReceived: 100, quantitySold: 0, remainingQuantity: 100, lowStockLevel: 15 },
-            { id: 'ITM-006', vendorId: 'VND-003', name: 'Iced Coffee', category: 'Drinks', price: 5.00, quantityReceived: 50, quantitySold: 0, remainingQuantity: 50, lowStockLevel: 10 }
-        ];
-
+        // ═════════════════════════════════════════════════════════════
+        // BOOTSTRAP — MUAT DATA DARI FIREBASE SAHAJA
+        // (Tiada seed data, tiada default item)
+        // ═════════════════════════════════════════════════════════════
         async function bootstrapFromCloud() {
             try {
-                const CLEAR_FLAG = 'vpos_cleared_v2';
-                if (!localStorage.getItem(CLEAR_FLAG)) {
-                    console.log('🧹 Pembersihan sekali sahaja: memadam semua transaksi lama...');
-                    await remove(ref(db, 'vpos/transactions'));
-                    localStorage.setItem('vpos_transactions', JSON.stringify([]));
-                    localStorage.setItem(CLEAR_FLAG, 'done');
-                    console.log('✅ Semua transaksi lama telah dipadam');
-                }
-
                 const [v, i, t] = await Promise.all([
                     window.__fbGetVendors(),
                     window.__fbGetItems(),
                     window.__fbGetTransactions()
                 ]);
 
-                if (v.length === 0) {
-                    for (const vendor of SEED_VENDORS) await window.__fbSaveVendor(vendor);
-                    localStorage.setItem('vpos_vendors', JSON.stringify(SEED_VENDORS));
-                } else {
-                    localStorage.setItem('vpos_vendors', JSON.stringify(v));
-                }
-
-                if (i.length === 0) {
-                    for (const item of SEED_ITEMS) await window.__fbSaveItem(item);
-                    localStorage.setItem('vpos_items', JSON.stringify(SEED_ITEMS));
-                } else {
-                    localStorage.setItem('vpos_items', JSON.stringify(i));
-                }
-
+                // Simpan ke localStorage sebagai cache (bukan default)
+                localStorage.setItem('vpos_vendors', JSON.stringify(v || []));
+                localStorage.setItem('vpos_items', JSON.stringify(i || []));
                 localStorage.setItem('vpos_transactions', JSON.stringify(t || []));
-                console.log('✅ Data loaded from Realtime Database');
+
+                console.log('✅ Data dimuat dari Firebase RTDB:',
+                    `vendors=${v.length}, items=${i.length}, transactions=${t.length}`);
             } catch (err) {
                 console.warn('⚠️ Gagal muat dari RTDB:', err);
+                // Kalau gagal, set ke array kosong (JANGAN guna default)
+                if (!localStorage.getItem('vpos_vendors')) localStorage.setItem('vpos_vendors', '[]');
+                if (!localStorage.getItem('vpos_items')) localStorage.setItem('vpos_items', '[]');
+                if (!localStorage.getItem('vpos_transactions')) localStorage.setItem('vpos_transactions', '[]');
             } finally {
                 window.__fbReady = true;
                 window.dispatchEvent(new Event('firebase-ready'));
@@ -725,40 +695,26 @@
     <!-- ==================== MAIN APPLICATION ======================= -->
     <!-- ============================================================= -->
     <script>
-        const DEFAULT_VENDORS = [
-            { id: 'VND-001', name: 'Vendor A (Bakery & Snacks)', contact: '012-3456789' },
-            { id: 'VND-002', name: 'Vendor B (Sandwich & Fast Food)', contact: '019-8765432' },
-            { id: 'VND-003', name: 'Vendor C (Beverages & Cafe)', contact: '017-1122334' }
-        ];
-
-        const DEFAULT_ITEMS = [
-            { id: 'ITM-001', vendorId: 'VND-001', name: 'Chocolate Donut', category: 'Donut', price: 4.00, quantityReceived: 50, quantitySold: 0, remainingQuantity: 50, lowStockLevel: 10 },
-            { id: 'ITM-002', vendorId: 'VND-001', name: 'Strawberry Donut', category: 'Donut', price: 4.50, quantityReceived: 40, quantitySold: 0, remainingQuantity: 40, lowStockLevel: 10 },
-            { id: 'ITM-003', vendorId: 'VND-001', name: 'Vanilla Donut', category: 'Donut', price: 4.00, quantityReceived: 30, quantitySold: 0, remainingQuantity: 30, lowStockLevel: 5 },
-            { id: 'ITM-004', vendorId: 'VND-002', name: 'Chicken Sandwich', category: 'Sandwich', price: 6.50, quantityReceived: 40, quantitySold: 0, remainingQuantity: 40, lowStockLevel: 8 },
-            { id: 'ITM-005', vendorId: 'VND-003', name: 'Mineral Water 500ml', category: 'Drinks', price: 2.00, quantityReceived: 100, quantitySold: 0, remainingQuantity: 100, lowStockLevel: 15 },
-            { id: 'ITM-006', vendorId: 'VND-003', name: 'Iced Coffee', category: 'Drinks', price: 5.00, quantityReceived: 50, quantitySold: 0, remainingQuantity: 50, lowStockLevel: 10 }
-        ];
-
-        const DEFAULT_TRANSACTIONS = [];
-
         function isTxActive(tx) {
             const status = tx.status || 'COMPLETED';
             return status === 'COMPLETED';
         }
 
+        // ═════════════════════════════════════════════════════════════
+        // STORAGE — FALLBACK [] (kosong), BUKAN data default
+        // ═════════════════════════════════════════════════════════════
         const Storage = {
-            getVendors: () => JSON.parse(localStorage.getItem('vpos_vendors')) || DEFAULT_VENDORS,
+            getVendors: () => JSON.parse(localStorage.getItem('vpos_vendors')) || [],
             saveVendors: (vendors) => {
                 localStorage.setItem('vpos_vendors', JSON.stringify(vendors));
                 vendors.forEach(v => window.__fbSaveVendor?.(v));
             },
-            getItems: () => JSON.parse(localStorage.getItem('vpos_items')) || DEFAULT_ITEMS,
+            getItems: () => JSON.parse(localStorage.getItem('vpos_items')) || [],
             saveItems: (items) => {
                 localStorage.setItem('vpos_items', JSON.stringify(items));
                 items.forEach(i => window.__fbSaveItem?.(i));
             },
-            getTransactions: () => JSON.parse(localStorage.getItem('vpos_transactions')) || DEFAULT_TRANSACTIONS,
+            getTransactions: () => JSON.parse(localStorage.getItem('vpos_transactions')) || [],
             saveTransactions: (txs) => {
                 localStorage.setItem('vpos_transactions', JSON.stringify(txs));
                 txs.forEach(t => window.__fbSaveTransaction?.(t));
@@ -766,17 +722,16 @@
             deleteVendor: (id) => window.__fbDeleteVendor?.(id),
             deleteItem: (id) => window.__fbDeleteItem?.(id),
             init: () => {
-                if (!localStorage.getItem('vpos_vendors')) Storage.saveVendors(DEFAULT_VENDORS);
-                if (!localStorage.getItem('vpos_items')) Storage.saveItems(DEFAULT_ITEMS);
-                if (!localStorage.getItem('vpos_transactions')) {
-                    localStorage.setItem('vpos_transactions', JSON.stringify([]));
-                }
+                // Pastikan key wujud, tapi JANGAN isi dengan data default
+                if (!localStorage.getItem('vpos_vendors')) localStorage.setItem('vpos_vendors', '[]');
+                if (!localStorage.getItem('vpos_items')) localStorage.setItem('vpos_items', '[]');
+                if (!localStorage.getItem('vpos_transactions')) localStorage.setItem('vpos_transactions', '[]');
             }
         };
 
         function startApp() {
             Storage.init();
-            console.log('🚀 App initialized');
+            console.log('🚀 App initialized (no default data)');
         }
 
         if (window.__fbReady) { startApp(); }
@@ -980,7 +935,7 @@
                         </div>
                     </div>
                 `;
-            }).join('') || '<div style="grid-column: 1/-1; text-align: center; padding: 2rem;">Tiada item ditemui.</div>';
+            }).join('') || '<div style="grid-column: 1/-1; text-align: center; padding: 2rem;">Tiada item ditemui. Tambah item di menu Items / Stok.</div>';
 
             renderCart();
         }
@@ -1257,7 +1212,7 @@
             renderAllViews();
         }
 
-        // ==================== RESET SEMUA TRANSAKSI ====================
+        // RESET SEMUA TRANSAKSI
         function openResetTransactionsModal() {
             const txs = Storage.getTransactions();
             if (txs.length === 0) { showToast('Tiada transaksi untuk dipadam.', 'warning'); return; }
@@ -1336,7 +1291,7 @@
                         </td>
                     </tr>
                 `;
-            }).join('') || '<tr><td colspan="8" style="text-align:center;">Tiada vendor ditemui.</td></tr>';
+            }).join('') || '<tr><td colspan="8" style="text-align:center;">Tiada vendor. Klik "+ Tambah Vendor" untuk mula.</td></tr>';
         }
 
         document.getElementById('vendor-search').addEventListener('input', renderVendors);
@@ -1370,7 +1325,8 @@
                 const v = vendors.find(v => v.id === id);
                 if (v) { v.name = name; v.contact = contact; }
             } else {
-                const newId = `VND-00${vendors.length + 1}`;
+                // ID unik berasaskan timestamp untuk elak konflik
+                const newId = `VND-${Date.now().toString().slice(-6)}`;
                 vendors.push({ id: newId, name, contact });
             }
             Storage.saveVendors(vendors);
@@ -1462,7 +1418,7 @@
                         </td>
                     </tr>
                 `;
-            }).join('') || '<tr><td colspan="9" style="text-align:center;">Tiada item ditemui.</td></tr>';
+            }).join('') || '<tr><td colspan="9" style="text-align:center;">Tiada item. Klik "+ Tambah Item" untuk mula.</td></tr>';
         }
 
         document.getElementById('item-search').addEventListener('input', renderItems);
@@ -1470,6 +1426,10 @@
 
         document.getElementById('add-item-btn').addEventListener('click', () => {
             const vendors = Storage.getVendors();
+            if (vendors.length === 0) {
+                showToast('Sila tambah vendor terlebih dahulu!', 'warning');
+                return;
+            }
             openModal({
                 title: 'Tambah Item Baru',
                 bodyHTML: `
@@ -1506,8 +1466,9 @@
                     item.lowStockLevel = low;
                 }
             } else {
+                // ID unik berasaskan timestamp
                 items.push({
-                    id: `ITM-00${items.length + 1}`, vendorId, name, category, price,
+                    id: `ITM-${Date.now().toString().slice(-6)}`, vendorId, name, category, price,
                     quantityReceived: qty, quantitySold: 0, remainingQuantity: qty, lowStockLevel: low
                 });
             }
@@ -1572,7 +1533,7 @@
                 const v = vendors.find(v => v.id === vId);
                 const vItems = items.filter(i => i.vendorId === vId);
                 const container = document.getElementById('tracking-content');
-                if (!v) { container.innerHTML = '<p>Pilih vendor.</p>'; return; }
+                if (!v) { container.innerHTML = '<p>Tiada vendor. Tambah vendor di menu Vendors.</p>'; return; }
                 container.innerHTML = `
                     <div class="table-container" style="padding: 1.25rem; margin-bottom: 1rem;">
                         <h3>${v.name}</h3>
@@ -1674,7 +1635,7 @@
                         <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${percent}%;"></div></div>
                     </div>
                 `;
-            }).join('');
+            }).join('') || '<p style="text-align:center; color:var(--text-muted);">Tiada vendor.</p>';
 
             const topItemsEl = document.getElementById('report-top-items');
             const sortedItems = [...items].sort((a, b) => b.quantitySold - a.quantitySold).slice(0, 5);
@@ -1683,7 +1644,7 @@
                     <span><b>${i.name}</b></span>
                     <span style="font-weight:700; color:var(--primary);">${i.quantitySold} terjual</span>
                 </div>
-            `).join('');
+            `).join('') || '<p style="text-align:center; color:var(--text-muted);">Tiada item.</p>';
         }
 
         function renderAllViews() {
@@ -1694,7 +1655,6 @@
 
         /* =============================================================
            PWA — SERVICE WORKER REGISTRATION (INLINE)
-           Service Worker dijana guna Blob URL dari kod di bawah.
            ============================================================= */
         if ('serviceWorker' in navigator) {
             const swCode = `
@@ -1772,7 +1732,7 @@
         }
 
         /* =============================================================
-           PWA — INSTALL PROMPT (Android / Desktop)
+           PWA — INSTALL PROMPT
            ============================================================= */
         let deferredPrompt = null;
         const installBtn = document.getElementById('install-btn');
@@ -1824,7 +1784,7 @@
         updateOnlineStatus();
 
         /* =============================================================
-           PWA — SPLASH LOGO (cuba guna ikon Flow, fallback ke "V")
+           PWA — SPLASH LOGO
            ============================================================= */
         (function loadSplashLogo() {
             const url = 'https://flow.google.com/shared/image/06bf2b9a-c67f-498c-977c-ff93f56bc0bb';
