@@ -13,27 +13,69 @@
     <meta name="theme-color" content="#2563eb">
     <meta name="color-scheme" content="light">
 
-    <!-- Manifest PWA -->
-    <link rel="manifest" href="manifest.json">
+    <!-- ============================================================
+         PWA — MANIFEST + IKON (INLINE)
+         Manifest dijana secara automatik guna Blob URL.
+         Ikon = SVG Data URI (tiada fail PNG diperlukan).
+         ============================================================ -->
+    <link rel="manifest" id="pwa-manifest">
 
     <!-- iOS / Safari -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="VendorPOS">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="icon-152.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="icon-167.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 
-    <!-- Ikon biasa -->
-    <link rel="icon" type="image/svg+xml" href="icon.svg">
-    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-
-    <!-- ⭐ IKON DARI GOOGLE FLOW (link yang anda beri) -->
+    <!-- Ikon dari Google Flow (fallback browser) -->
     <link rel="icon" href="https://flow.google.com/shared/image/06bf2b9a-c67f-498c-977c-ff93f56bc0bb">
     <link rel="apple-touch-icon" href="https://flow.google.com/shared/image/06bf2b9a-c67f-498c-977c-ff93f56bc0bb">
+
+    <script>
+      // ═══════════════════════════════════════════════════════════════
+      // PWA MANIFEST — DIJANA SECARA AUTOMATIK (tiada manifest.json)
+      // ═══════════════════════════════════════════════════════════════
+      (function injectPWAManifest() {
+        // ---- Ikon SVG inline (boleh tukar warna/teks ikut suka) ----
+        const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#2563eb"/>
+              <stop offset="100%" stop-color="#1d4ed8"/>
+            </linearGradient>
+          </defs>
+          <rect width="512" height="512" rx="112" fill="url(#g)"/>
+          <text x="256" y="372" font-family="Arial, Helvetica, sans-serif"
+                font-size="340" font-weight="800" fill="#ffffff"
+                text-anchor="middle">V</text>
+        </svg>`;
+
+        const iconDataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(iconSvg);
+
+        const manifest = {
+          name: "Vendor POS & Item Tracking System",
+          short_name: "VendorPOS",
+          description: "Sistem POS & Penjejakan Item Vendor — jualan, stok, dan laporan dalam satu app.",
+          start_url: "./",
+          scope: "./",
+          display: "standalone",
+          display_override: ["standalone", "minimal-ui"],
+          orientation: "portrait-primary",
+          background_color: "#ffffff",
+          theme_color: "#2563eb",
+          lang: "ms",
+          categories: ["business", "productivity", "shopping"],
+          icons: [
+            { src: iconDataUri, sizes: "192x192", type: "image/svg+xml", purpose: "any" },
+            { src: iconDataUri, sizes: "512x512", type: "image/svg+xml", purpose: "any" },
+            { src: iconDataUri, sizes: "512x512", type: "image/svg+xml", purpose: "maskable" }
+          ]
+        };
+
+        const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+        const url = URL.createObjectURL(blob);
+        document.getElementById('pwa-manifest').setAttribute('href', url);
+      })();
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1651,11 +1693,67 @@
         window.renderAllViews = renderAllViews;
 
         /* =============================================================
-           PWA — SERVICE WORKER REGISTRATION
+           PWA — SERVICE WORKER REGISTRATION (INLINE)
+           Service Worker dijana guna Blob URL dari kod di bawah.
            ============================================================= */
         if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'vpos-cache-v1';
+                const PRECACHE = ['./', './index.html'];
+
+                self.addEventListener('install', (e) => {
+                    e.waitUntil(
+                        caches.open(CACHE_NAME)
+                            .then((c) => c.addAll(PRECACHE).catch(() => {}))
+                            .then(() => self.skipWaiting())
+                    );
+                });
+
+                self.addEventListener('activate', (e) => {
+                    e.waitUntil(
+                        caches.keys()
+                            .then((keys) => Promise.all(
+                                keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
+                            ))
+                            .then(() => self.clients.claim())
+                    );
+                });
+
+                self.addEventListener('fetch', (e) => {
+                    const req = e.request;
+                    if (req.method !== 'GET') return;
+
+                    const url = new URL(req.url);
+                    if (
+                        url.hostname.includes('firebase') ||
+                        url.hostname.includes('googleapis.com') ||
+                        url.hostname.includes('gstatic.com') ||
+                        url.hostname.includes('flow.google.com')
+                    ) return;
+
+                    e.respondWith(
+                        fetch(req)
+                            .then((res) => {
+                                if (res && res.status === 200 && res.type === 'basic') {
+                                    const copy = res.clone();
+                                    caches.open(CACHE_NAME).then((c) => c.put(req, copy)).catch(() => {});
+                                }
+                                return res;
+                            })
+                            .catch(() => caches.match(req).then((r) => r || caches.match('./index.html')))
+                    );
+                });
+
+                self.addEventListener('message', (e) => {
+                    if (e.data === 'SKIP_WAITING') self.skipWaiting();
+                });
+            `;
+
+            const swBlob = new Blob([swCode], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(swBlob);
+
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js', { scope: './' })
+                navigator.serviceWorker.register(swUrl, { scope: './' })
                     .then((reg) => {
                         console.log('✅ Service Worker berjaya didaftarkan:', reg.scope);
 
