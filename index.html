@@ -89,6 +89,7 @@
             --transition-normal: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+        *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 6px; }
         html { -webkit-text-size-adjust: 100%; }
         body { background-color: var(--bg-body); color: var(--text-main); overflow-x: hidden; min-height: 100vh; min-height: 100dvh; overscroll-behavior-y: contain; }
         #app-container { display: flex; min-height: 100vh; min-height: 100dvh; opacity: 0; transition: opacity 0.4s ease; }
@@ -130,7 +131,8 @@
         .stat-val { font-size: 1.4rem; font-weight: 800; color: var(--text-main); line-height: 1.2; }
         .stat-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.65rem; border-radius: var(--radius-full); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        .badge { display: inline-flex; align-items: center; gap: 5px; padding: 0.25rem 0.65rem; border-radius: var(--radius-full); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
         .badge-success { background: var(--success-light); color: var(--success); }
         .badge-warning { background: var(--warning-light); color: var(--warning); }
         .badge-danger { background: var(--danger-light); color: var(--danger); }
@@ -144,6 +146,77 @@
         td { padding: 1rem; border-bottom: 1px solid var(--border); color: var(--text-main); vertical-align: middle; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background-color: #f1f5f9; }
+
+        /* ── Section header (seragam) ── */
+        .section-header {
+            padding: 0.9rem 1.1rem;
+            font-weight: 800;
+            font-size: 0.92rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            background: linear-gradient(to bottom, #ffffff, #fafafa);
+        }
+
+        /* ── Search box (seragam dengan icon) ── */
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+            flex: 1;
+            min-width: 180px;
+            max-width: 300px;
+        }
+        .search-box:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        .search-box .search-box-icon {
+            position: absolute;
+            left: 14px;
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+        .search-box .form-control {
+            border: none;
+            background: transparent;
+            padding-left: 40px;
+            box-shadow: none;
+            max-width: none;
+        }
+        .search-box .form-control:focus { box-shadow: none; }
+
+        /* ── Sticky action column ── */
+        @media (min-width: 768px) {
+            #items-table th:last-child,
+            #items-table td:last-child,
+            #vendors-table th:last-child,
+            #vendors-table td:last-child,
+            #sales-table th:last-child,
+            #sales-table td:last-child {
+                position: sticky;
+                right: 0;
+                background: var(--surface);
+                box-shadow: -6px 0 8px -6px rgba(0, 0, 0, 0.08);
+                z-index: 1;
+            }
+            #items-table th:last-child,
+            #vendors-table th:last-child,
+            #sales-table th:last-child {
+                background: #f8fafc;
+                z-index: 2;
+            }
+            tr:hover td:last-child { background-color: #f1f5f9; }
+        }
 
         .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0.6rem 1.2rem; border-radius: var(--radius-md); font-weight: 600; font-size: 0.88rem; border: 1px solid transparent; cursor: pointer; transition: all var(--transition-fast); white-space: nowrap; }
         .btn-primary { background: var(--primary); color: white; }
@@ -182,7 +255,6 @@
             min-width: 0;
         }
 
-        /* ── Search bar ── */
         .pos-search-wrap {
             position: relative;
             display: flex;
@@ -232,7 +304,6 @@
         .pos-search-clear:hover { background: #cbd5e1; color: var(--text-main); }
         .pos-search-clear.show { display: flex; }
 
-        /* ── Category pills ── */
         .category-pills {
             display: flex;
             gap: 8px;
@@ -277,7 +348,6 @@
         }
         .pill.active .pill-count { background: rgba(255, 255, 255, 0.28); }
 
-        /* ── Product grid ── */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
@@ -358,7 +428,6 @@
             display: inline-block;
             flex-shrink: 0;
         }
-        /* In-cart badge (kanan atas) */
         .product-card .in-cart-badge {
             position: absolute;
             top: -7px;
@@ -382,7 +451,6 @@
             0% { transform: scale(0.5); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-        /* Out-of-stock overlay */
         .product-card.disabled::after {
             content: '';
             position: absolute;
@@ -395,7 +463,6 @@
             pointer-events: none;
         }
 
-        /* ── Empty state (grid) ── */
         .pos-empty {
             grid-column: 1 / -1;
             display: flex;
@@ -411,7 +478,6 @@
         .pos-empty-title { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
         .pos-empty-sub { font-size: 0.82rem; }
 
-        /* ── Cart section ── */
         .cart-section {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -481,7 +547,6 @@
             -webkit-overflow-scrolling: touch;
             min-height: 100px;
         }
-        /* Empty cart state */
         .cart-empty {
             display: flex;
             flex-direction: column;
@@ -615,9 +680,6 @@
         }
         .checkout-btn:not(:disabled):active { transform: scale(0.98); }
 
-        /* ═══════════════════════════════════════════════════════════
-           MODAL
-           ═══════════════════════════════════════════════════════════ */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; padding: 1rem; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal-card { background: var(--surface); border-radius: var(--radius-lg); width: 100%; max-width: 500px; max-height: 90vh; max-height: 90dvh; overflow-y: auto; box-shadow: var(--shadow-lg); transform: scale(0.95) translateY(10px); transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); -webkit-overflow-scrolling: touch; }
@@ -679,9 +741,61 @@
 
             .grid-2col { grid-template-columns: 1fr !important; gap: 0.875rem !important; }
 
-            .table-container { margin-bottom: 1rem; border-radius: var(--radius-sm); }
+            .table-container { margin-bottom: 1rem; border-radius: var(--radius-sm); overflow-x: visible; }
             th { padding: 0.65rem 0.75rem; font-size: 0.72rem; }
             td { padding: 0.7rem 0.75rem; font-size: 0.82rem; }
+
+            /* ═══ Mobile Card View untuk Table ═══ */
+            .table-container.responsive-cards { overflow-x: visible; background: transparent; border: none; box-shadow: none; }
+            .table-container.responsive-cards table,
+            .table-container.responsive-cards thead,
+            .table-container.responsive-cards tbody,
+            .table-container.responsive-cards tr,
+            .table-container.responsive-cards td {
+                display: block;
+                width: 100%;
+            }
+            .table-container.responsive-cards thead { display: none; }
+            .table-container.responsive-cards tbody tr:not(.empty-row) {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                margin-bottom: 0.65rem;
+                padding: 0.75rem 0.9rem;
+                box-shadow: var(--shadow-sm);
+            }
+            .table-container.responsive-cards tbody tr:not(.empty-row):last-child { margin-bottom: 0; }
+            .table-container.responsive-cards tbody tr:hover td { background-color: transparent; }
+            .table-container.responsive-cards td {
+                padding: 0.35rem 0;
+                border: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 0.85rem;
+                gap: 1rem;
+                text-align: right;
+            }
+            .table-container.responsive-cards td[data-label]::before {
+                content: attr(data-label);
+                font-weight: 700;
+                color: var(--text-muted);
+                font-size: 0.68rem;
+                text-transform: uppercase;
+                letter-spacing: 0.4px;
+                flex-shrink: 0;
+                text-align: left;
+            }
+            .table-container.responsive-cards td:last-child {
+                border-top: 1px dashed var(--border);
+                margin-top: 0.5rem;
+                padding-top: 0.6rem;
+                justify-content: flex-end;
+                gap: 6px;
+            }
+            .table-container.responsive-cards td:last-child::before { display: none; }
+
+            .search-box { max-width: 100%; flex: 1; }
 
             /* ── POS mobile ── */
             .pos-layout {
@@ -774,7 +888,6 @@
 </head>
 <body>
 
-    <!-- SPLASH & LOGIN OVERLAY -->
     <div id="auth-overlay" class="auth-overlay">
         <div class="splash-card">
             <div class="brand-logo" id="splash-logo">V</div>
@@ -800,7 +913,6 @@
         </div>
     </div>
 
-    <!-- MAIN APP -->
     <div id="app-container">
         <div id="sidebar-overlay" class="sidebar-overlay"></div>
 
@@ -865,7 +977,6 @@
                 </div>
             </header>
 
-            <!-- DASHBOARD VIEW -->
             <section id="view-dashboard" class="page-view active">
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -895,8 +1006,8 @@
                 </div>
 
                 <div class="grid-2col" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
-                    <div class="table-container">
-                        <div style="padding: 1rem; font-weight: 800; border-bottom: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap: wrap;">
+                    <div class="table-container responsive-cards">
+                        <div class="section-header">
                             <span>Transaksi Terkini</span>
                             <button class="btn btn-danger btn-sm" onclick="openResetTransactionsModal()">🗑️ Reset Semua</button>
                         </div>
@@ -906,8 +1017,8 @@
                         </table>
                     </div>
 
-                    <div class="table-container">
-                        <div style="padding: 1rem; font-weight: 800; border-bottom: 1px solid var(--border); color: var(--danger);">Amaran Stok Rendah</div>
+                    <div class="table-container responsive-cards">
+                        <div class="section-header" style="color: var(--danger);">Amaran Stok Rendah</div>
                         <table id="dash-low-stock-table">
                             <thead><tr><th>Item</th><th>Vendor</th><th>Baki</th><th>Status</th></tr></thead>
                             <tbody></tbody>
@@ -916,14 +1027,9 @@
                 </div>
             </section>
 
-            <!-- ══════════════════════════════════════════════════════
-                 POS VIEW — REDESIGNED
-                 ══════════════════════════════════════════════════════ -->
             <section id="view-pos" class="page-view">
                 <div class="pos-layout">
-                    <!-- LEFT: Products -->
                     <div class="pos-products-section">
-                        <!-- Search bar dengan icon -->
                         <div class="pos-search-wrap">
                             <svg class="pos-search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
@@ -932,14 +1038,11 @@
                             <button type="button" class="pos-search-clear" id="pos-search-clear" aria-label="Kosongkan carian">&times;</button>
                         </div>
 
-                        <!-- Category pills -->
                         <div class="category-pills" id="pos-category-pills"></div>
 
-                        <!-- Product grid -->
                         <div class="product-grid" id="pos-product-grid"></div>
                     </div>
 
-                    <!-- RIGHT: Cart -->
                     <aside class="cart-section">
                         <div class="cart-header">
                             <div class="cart-title">
@@ -973,13 +1076,17 @@
                 </div>
             </section>
 
-            <!-- VENDORS VIEW -->
             <section id="view-vendors" class="page-view">
                 <div class="toolbar">
-                    <input type="text" id="vendor-search" class="form-control" placeholder="Cari vendor...">
+                    <div class="search-box">
+                        <svg class="search-box-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/>
+                        </svg>
+                        <input type="text" id="vendor-search" class="form-control" placeholder="Cari vendor...">
+                    </div>
                     <button class="btn btn-primary" id="add-vendor-btn">+ Tambah Vendor</button>
                 </div>
-                <div class="table-container">
+                <div class="table-container responsive-cards">
                     <table id="vendors-table">
                         <thead><tr><th>ID</th><th>Nama Vendor</th><th>Hubungi</th><th>Total Item</th><th>Terjual</th><th>Baki</th><th>Total Jualan</th><th>Tindakan</th></tr></thead>
                         <tbody></tbody>
@@ -987,18 +1094,22 @@
                 </div>
             </section>
 
-            <!-- ITEMS VIEW -->
             <section id="view-items" class="page-view">
                 <div class="toolbar">
                     <div class="toolbar-filters">
-                        <input type="text" id="item-search" class="form-control" placeholder="Cari item...">
+                        <div class="search-box">
+                            <svg class="search-box-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/>
+                            </svg>
+                            <input type="text" id="item-search" class="form-control" placeholder="Cari item...">
+                        </div>
                         <select id="item-vendor-filter" class="form-control">
                             <option value="">Semua Vendor</option>
                         </select>
                     </div>
                     <button class="btn btn-primary" id="add-item-btn">+ Tambah Item</button>
                 </div>
-                <div class="table-container">
+                <div class="table-container responsive-cards">
                     <table id="items-table">
                         <thead><tr><th>Nama Item</th><th>Vendor</th><th>Kategori</th><th>Harga</th><th>Diterima</th><th>Terjual</th><th>Baki</th><th>Status</th><th>Tindakan</th></tr></thead>
                         <tbody></tbody>
@@ -1006,7 +1117,6 @@
                 </div>
             </section>
 
-            <!-- VENDOR TRACKING VIEW -->
             <section id="view-tracking" class="page-view">
                 <div style="margin-bottom: 1rem;">
                     <select id="tracking-vendor-select" class="form-control" style="max-width: 300px;"></select>
@@ -1014,11 +1124,15 @@
                 <div id="tracking-content"></div>
             </section>
 
-            <!-- SALES HISTORY VIEW -->
             <section id="view-sales" class="page-view">
                 <div class="toolbar">
                     <div class="toolbar-filters">
-                        <input type="text" id="sales-search" class="form-control" placeholder="Cari Receipt ID...">
+                        <div class="search-box">
+                            <svg class="search-box-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/>
+                            </svg>
+                            <input type="text" id="sales-search" class="form-control" placeholder="Cari Receipt ID...">
+                        </div>
                         <select id="sales-period-filter" class="form-control">
                             <option value="all">Semua Masa</option>
                             <option value="today">Hari Ini</option>
@@ -1028,7 +1142,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="table-container">
+                <div class="table-container responsive-cards">
                     <table id="sales-table">
                         <thead><tr><th>Receipt ID</th><th>Tarikh & Masa</th><th>Item</th><th>Jumlah</th><th>Kaedah Bayaran</th><th>Status</th><th>Tindakan</th></tr></thead>
                         <tbody></tbody>
@@ -1036,7 +1150,6 @@
                 </div>
             </section>
 
-            <!-- REPORTS VIEW -->
             <section id="view-reports" class="page-view">
                 <div class="grid-2col" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
                     <div class="table-container" style="padding: 1.25rem;">
@@ -1066,9 +1179,6 @@
     <div id="toast-container"></div>
     <div id="offline-bar">📴 Anda sedang OFFLINE — data mungkin tidak disegerakkan</div>
 
-    <!-- ═══════════════════════════════════════════════════════════
-         FIREBASE INITIALIZATION — FIXED (non-blocking)
-         ═══════════════════════════════════════════════════════════ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, set, get, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -1082,15 +1192,12 @@
             storageBucket: "vendorsistem.firebasestorage.app",
             messagingSenderId: "33345214210",
             appId: "1:33345214210:web:85544f732914ab5eaa941b"
-            // ⚠️ measurementId dibuang — ia menyebabkan analytics fetch hang kat sesetengah device Android
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
 
-        // ⚡ Analytics — NON-BLOCKING. Jangan `await` di top-level.
-        // Kalau lambat/gagal, tak akan halang app boot.
         import("https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js")
             .then(mod => { try { mod.getAnalytics(app); } catch (e) { console.warn('Analytics init fail:', e?.message); } })
             .catch(err => console.warn('⚠️ Analytics tidak tersedia:', err?.message));
@@ -1148,14 +1255,10 @@
             } catch (err) { return false; }
         };
 
-        // ✅ SELESAI DEFINE semua API — terus tanda ready & dispatch event.
-        // JANGAN tunggu baca database. Itu punca app hang bila network slow.
         window.__fbReady = true;
         window.dispatchEvent(new Event('firebase-ready'));
         console.log('✅ Firebase API ready (sync event fired).');
 
-        // ⚡ Bootstrap data dari cloud — JALAN DI BELAKANG.
-        // UI boleh mula terus, data akan sync bila siap.
         (async function bootstrapFromCloud() {
             try {
                 const [v, i, t] = await Promise.all([
@@ -1170,7 +1273,6 @@
                     localStorage.setItem('vpos_transactions', JSON.stringify(t));
                     console.log('✅ Data dimuat dari Firebase RTDB:',
                         `vendors=${v.length}, items=${i.length}, transactions=${t.length}`);
-                    // Refresh UI kalau app dah render
                     try { window.renderAllViews?.(); } catch (_) {}
                 } else {
                     console.log('ℹ️ Cloud kosong — kekalkan data local.');
@@ -1183,7 +1285,6 @@
             }
         })();
 
-        // Realtime subscriptions — lepas 2s, tak kritikal
         setTimeout(() => {
             try {
                 window.__fbSubscribeVendors(() => window.renderAllViews?.());
@@ -1195,7 +1296,6 @@
         }, 2000);
     </script>
 
-    <!-- MAIN APPLICATION -->
     <script>
     (function () {
         'use strict';
@@ -1222,6 +1322,25 @@
         }
 
         function isTxActive(tx) { return (tx.status || 'COMPLETED') === 'COMPLETED'; }
+
+        // ── Currency & number formatting ──
+        const fmtRM = (n) => 'RM ' + (Number(n) || 0).toLocaleString('ms-MY', {
+            minimumFractionDigits: 2, maximumFractionDigits: 2
+        });
+        const fmtNum = (n) => (Number(n) || 0).toLocaleString('ms-MY');
+
+        // ── Empty state row helper ──
+        function emptyRow(colspan, title, subtitle) {
+            return `<tr class="empty-row"><td colspan="${colspan}" style="padding:0;border:none;">
+                <div class="pos-empty" style="padding:2.5rem 1rem;">
+                    <svg width="42" height="42" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                    </svg>
+                    <div class="pos-empty-title">${title}</div>
+                    <div class="pos-empty-sub">${subtitle}</div>
+                </div>
+            </td></tr>`;
+        }
 
         /* ═══════════════════════════════════════════════
            STORAGE
@@ -1276,21 +1395,24 @@
             }
         };
 
-        /* ═══════════════════════════════════════════════
-           STATE
-           ═══════════════════════════════════════════════ */
         const State = { cart: [], activeCategory: 'ALL', currentUser: null, authResolved: false };
 
         /* ═══════════════════════════════════════════════
            TOAST & MODAL
            ═══════════════════════════════════════════════ */
+        const TOAST_ICONS = { success: '✅', danger: '❌', warning: '⚠️', info: 'ℹ️' };
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            const span = document.createElement('span');
-            span.textContent = message;
-            toast.appendChild(span);
+            const iconSpan = document.createElement('span');
+            iconSpan.style.fontSize = '1.05rem';
+            iconSpan.style.flexShrink = '0';
+            iconSpan.textContent = TOAST_ICONS[type] || TOAST_ICONS.info;
+            const textSpan = document.createElement('span');
+            textSpan.textContent = message;
+            toast.appendChild(iconSpan);
+            toast.appendChild(textSpan);
             container.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
@@ -1360,8 +1482,6 @@
             });
         }
 
-        // ✅ FIX: fallback — kalau event tak fire, tetap pasang dalam 4s.
-        // Ini elak "blank forever" bila event firebase-ready tersekat.
         let _authAttached = false;
         function tryAttachAuth() {
             if (_authAttached) return;
@@ -1465,12 +1585,12 @@
             const items = Storage.getItems();
             const txs = Storage.getTransactions();
 
-            document.getElementById('dash-total-vendors').textContent = vendors.length;
-            document.getElementById('dash-total-items').textContent = items.length;
-            document.getElementById('dash-received').textContent = items.reduce((a, i) => a + (i.quantityReceived || 0), 0);
-            document.getElementById('dash-sold').textContent = items.reduce((a, i) => a + (i.quantitySold || 0), 0);
-            document.getElementById('dash-remaining').textContent = items.reduce((a, i) => a + (i.remainingQuantity || 0), 0);
-            document.getElementById('dash-sales').textContent = `RM ${txs.filter(isTxActive).reduce((a, t) => a + (t.total || 0), 0).toFixed(2)}`;
+            document.getElementById('dash-total-vendors').textContent = fmtNum(vendors.length);
+            document.getElementById('dash-total-items').textContent = fmtNum(items.length);
+            document.getElementById('dash-received').textContent = fmtNum(items.reduce((a, i) => a + (i.quantityReceived || 0), 0));
+            document.getElementById('dash-sold').textContent = fmtNum(items.reduce((a, i) => a + (i.quantitySold || 0), 0));
+            document.getElementById('dash-remaining').textContent = fmtNum(items.reduce((a, i) => a + (i.remainingQuantity || 0), 0));
+            document.getElementById('dash-sales').textContent = fmtRM(txs.filter(isTxActive).reduce((a, t) => a + (t.total || 0), 0));
 
             const recentTxTbody = document.querySelector('#dash-recent-tx-table tbody');
             recentTxTbody.innerHTML = txs.slice(-5).reverse().map(t => {
@@ -1479,12 +1599,12 @@
                 if (status === 'CANCELLED') statusTag = ' <span class="badge badge-danger" style="font-size:0.6rem;">CANCEL</span>';
                 else if (status === 'REFUNDED') statusTag = ' <span class="badge badge-refund" style="font-size:0.6rem;">REFUND</span>';
                 return `<tr>
-                    <td><b>${esc(t.receiptNumber)}</b>${statusTag}</td>
-                    <td>RM ${(t.total || 0).toFixed(2)}</td>
-                    <td><span class="badge badge-info">${esc(t.paymentMethod)}</span></td>
-                    <td>${new Date(t.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+                    <td data-label="Receipt"><b>${esc(t.receiptNumber)}</b>${statusTag}</td>
+                    <td data-label="Jumlah">${fmtRM(t.total)}</td>
+                    <td data-label="Bayaran"><span class="badge badge-info">${esc(t.paymentMethod)}</span></td>
+                    <td data-label="Masa">${new Date(t.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
                 </tr>`;
-            }).join('') || '<tr><td colspan="4" style="text-align:center;">Tiada transaksi.</td></tr>';
+            }).join('') || emptyRow(4, 'Tiada Transaksi', 'Belum ada transaksi direkodkan');
 
             const lowStockItems = items.filter(i => i.remainingQuantity <= i.lowStockLevel);
             const lowStockTbody = document.querySelector('#dash-low-stock-table tbody');
@@ -1493,16 +1613,16 @@
                 const badgeClass = i.remainingQuantity === 0 ? 'badge-danger' : 'badge-warning';
                 const statusText = i.remainingQuantity === 0 ? 'SOLD OUT' : 'LOW STOCK';
                 return `<tr>
-                    <td><b>${esc(i.name)}</b></td>
-                    <td>${v ? esc(v.name) : '-'}</td>
-                    <td>${i.remainingQuantity}</td>
-                    <td><span class="badge ${badgeClass}">${statusText}</span></td>
+                    <td data-label="Item"><b>${esc(i.name)}</b></td>
+                    <td data-label="Vendor">${v ? esc(v.name) : '-'}</td>
+                    <td data-label="Baki">${fmtNum(i.remainingQuantity)}</td>
+                    <td data-label="Status"><span class="badge ${badgeClass}">${statusText}</span></td>
                 </tr>`;
-            }).join('') || '<tr><td colspan="4" style="text-align:center;">Semua stok mencukupi.</td></tr>';
+            }).join('') || emptyRow(4, 'Stok Mencukupi', 'Semua item berada pada tahap selamat');
         }
 
         /* ═══════════════════════════════════════════════
-           RENDER: POS — REDESIGNED
+           RENDER: POS
            ═══════════════════════════════════════════════ */
         function renderPOS() {
             const items = Storage.getItems();
@@ -1511,10 +1631,8 @@
             const searchClear = document.getElementById('pos-search-clear');
             const search = (searchInput.value || '').toLowerCase().trim();
 
-            // Show/hide clear button
             searchClear.classList.toggle('show', search.length > 0);
 
-            // ── Category pills with counts ──
             const categoryCounts = new Map();
             items.forEach(i => {
                 const cat = i.category || 'Umum';
@@ -1542,7 +1660,6 @@
                 });
             }
 
-            // ── Filter items ──
             const filteredItems = items.filter(i => {
                 const cat = i.category || 'Umum';
                 const matchesCategory = State.activeCategory === 'ALL' || cat === State.activeCategory;
@@ -1553,7 +1670,6 @@
                 return haystack.includes(search);
             });
 
-            // ── Product grid ──
             const grid = document.getElementById('pos-product-grid');
 
             if (filteredItems.length === 0) {
@@ -1570,7 +1686,6 @@
                 return;
             }
 
-            // Build cart qty map for in-cart badge
             const cartMap = new Map();
             State.cart.forEach(c => cartMap.set(c.itemId, c.qty));
 
@@ -1580,7 +1695,6 @@
                 const isOut = stock <= 0;
                 const inCartQty = cartMap.get(i.id) || 0;
 
-                // Stock dot color
                 let dotColor = 'var(--success)';
                 let stockLabel = `${stock} baki`;
                 if (isOut) { dotColor = 'var(--danger)'; stockLabel = 'Habis'; }
@@ -1591,7 +1705,7 @@
                         ${inCartQty > 0 ? `<div class="in-cart-badge">${inCartQty}</div>` : ''}
                         <div class="vendor-tag">${v ? esc(v.name) : ''}</div>
                         <div class="item-name">${esc(i.name)}</div>
-                        <div class="item-price">RM ${(i.price || 0).toFixed(2)}</div>
+                        <div class="item-price">${fmtRM(i.price)}</div>
                         <div class="stock-tag">
                             <span class="stock-dot" style="background:${dotColor};"></span>
                             ${esc(stockLabel)}
@@ -1606,7 +1720,6 @@
             renderCart();
         }
 
-        // Search input handlers
         const posSearchInput = document.getElementById('pos-search');
         const posSearchClear = document.getElementById('pos-search-clear');
         posSearchInput.addEventListener('input', debounce(renderPOS, 150));
@@ -1658,7 +1771,6 @@
             const totalItems = State.cart.reduce((sum, c) => sum + c.qty, 0);
             const total = State.cart.reduce((sum, c) => sum + c.subtotal, 0);
 
-            // Header: count badge + clear button
             const cartCountEl = document.getElementById('cart-count');
             cartCountEl.textContent = totalItems;
             cartCountEl.dataset.count = totalItems;
@@ -1666,7 +1778,6 @@
             const clearBtn = document.getElementById('pos-clear-cart');
             clearBtn.hidden = State.cart.length === 0;
 
-            // Items
             if (State.cart.length === 0) {
                 cartContainer.innerHTML = `
                     <div class="cart-empty">
@@ -1681,7 +1792,7 @@
                     <div class="cart-item">
                         <div class="cart-item-info">
                             <div class="cart-item-title">${esc(c.name)}</div>
-                            <div class="cart-item-sub">RM ${c.price.toFixed(2)} × ${c.qty}</div>
+                            <div class="cart-item-sub">${fmtRM(c.price)} × ${c.qty}</div>
                         </div>
                         <div class="qty-controls">
                             <button class="qty-btn" data-qty-item="${esc(c.itemId)}" data-delta="-1" aria-label="Kurang">−</button>
@@ -1689,7 +1800,7 @@
                             <button class="qty-btn" data-qty-item="${esc(c.itemId)}" data-delta="1" aria-label="Tambah">+</button>
                         </div>
                         <div class="cart-item-right">
-                            <div class="cart-item-subtotal">RM ${c.subtotal.toFixed(2)}</div>
+                            <div class="cart-item-subtotal">${fmtRM(c.subtotal)}</div>
                         </div>
                     </div>
                 `).join('');
@@ -1702,9 +1813,8 @@
                 });
             }
 
-            // Footer totals
-            document.getElementById('cart-subtotal').textContent = `RM ${total.toFixed(2)}`;
-            document.getElementById('cart-total').textContent = `RM ${total.toFixed(2)}`;
+            document.getElementById('cart-subtotal').textContent = fmtRM(total);
+            document.getElementById('cart-total').textContent = fmtRM(total);
             document.getElementById('pos-checkout-btn').disabled = State.cart.length === 0;
         }
 
@@ -1724,7 +1834,7 @@
                 bodyHTML: `
                     <div style="text-align:center; margin-bottom: 1.5rem;">
                         <div style="font-size: 0.85rem; color: var(--text-muted);">Jumlah Perlu Dibayar</div>
-                        <div style="font-size: 2rem; font-weight: 800; color: var(--primary);">RM ${total.toFixed(2)}</div>
+                        <div style="font-size: 2rem; font-weight: 800; color: var(--primary);">${fmtRM(total)}</div>
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <button class="btn btn-secondary" style="padding: 1.2rem 1rem; flex-direction: column; font-size: 1rem;" id="pay-cash">💵<br>CASH</button>
@@ -1740,7 +1850,7 @@
                 title: 'Bayaran Tunai (CASH)',
                 bodyHTML: `
                     <div style="margin-bottom: 1rem;">
-                        <div style="font-weight: 700; margin-bottom: 6px;">Jumlah: RM ${total.toFixed(2)}</div>
+                        <div style="font-weight: 700; margin-bottom: 6px;">Jumlah: ${fmtRM(total)}</div>
                         <label class="form-label" for="cash-received-input">Jumlah Tunai Diterima (RM)</label>
                         <input type="number" step="0.01" inputmode="decimal" id="cash-received-input" class="form-control" value="${total.toFixed(2)}">
                         <div id="cash-change-display" style="margin-top: 1rem; font-weight: 800; font-size: 1.1rem; color: var(--success);">Baki: RM 0.00</div>
@@ -1760,10 +1870,10 @@
                 const changeEl = document.getElementById('cash-change-display');
                 if (change < 0) {
                     changeEl.style.color = 'var(--danger)';
-                    changeEl.textContent = `Kurang: RM ${Math.abs(change).toFixed(2)}`;
+                    changeEl.textContent = `Kurang: ${fmtRM(Math.abs(change))}`;
                 } else {
                     changeEl.style.color = 'var(--success)';
-                    changeEl.textContent = `Baki: RM ${change.toFixed(2)}`;
+                    changeEl.textContent = `Baki: ${fmtRM(change)}`;
                 }
             });
         }
@@ -1781,7 +1891,7 @@
                                 <path d="M35 5h10v10H35zM50 20h10v10H50zM20 35h10v10H20zM40 40h20v20H40zM70 50h20v10H70zM80 70h15v20H80z" fill="#000"/>
                             </svg>
                         </div>
-                        <div style="font-size: 1.2rem; font-weight: 800; margin-top: 1rem;">RM ${total.toFixed(2)}</div>
+                        <div style="font-size: 1.2rem; font-weight: 800; margin-top: 1rem;">${fmtRM(total)}</div>
                     </div>`,
                 footerHTML: `
                     <button class="btn btn-secondary" id="qr-cancel">Batal</button>
@@ -1869,11 +1979,11 @@
                         <div>Tarikh: ${new Date(tx.date).toLocaleString()}</div>
                         <div>Status: ${esc(status)}</div>
                         <div class="receipt-line"></div>
-                        ${tx.items.map(i => `<div style="display:flex; justify-content:space-between;"><span>${esc(i.name)} × ${i.qty}</span><span>RM ${i.subtotal.toFixed(2)}</span></div>`).join('')}
+                        ${tx.items.map(i => `<div style="display:flex; justify-content:space-between;"><span>${esc(i.name)} × ${i.qty}</span><span>${fmtRM(i.subtotal)}</span></div>`).join('')}
                         <div class="receipt-line"></div>
-                        <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>JUMLAH:</span><span>RM ${tx.total.toFixed(2)}</span></div>
-                        <div style="display:flex; justify-content:space-between;"><span>Bayaran (${esc(tx.paymentMethod)}):</span><span>RM ${tx.amountReceived.toFixed(2)}</span></div>
-                        <div style="display:flex; justify-content:space-between;"><span>Baki:</span><span>RM ${tx.change.toFixed(2)}</span></div>
+                        <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>JUMLAH:</span><span>${fmtRM(tx.total)}</span></div>
+                        <div style="display:flex; justify-content:space-between;"><span>Bayaran (${esc(tx.paymentMethod)}):</span><span>${fmtRM(tx.amountReceived)}</span></div>
+                        <div style="display:flex; justify-content:space-between;"><span>Baki:</span><span>${fmtRM(tx.change)}</span></div>
                         <div class="receipt-line"></div>
                         <div class="receipt-center">Terima Kasih! Sila Datang Lagi</div>
                     </div>`,
@@ -1906,7 +2016,7 @@
                     </div>
                     <div style="margin-bottom: 1rem; padding: 0.85rem; background: #f8fafc; border-radius: var(--radius-md); font-size: 0.88rem;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Resit:</span><b>${esc(tx.receiptNumber)}</b></div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Jumlah:</span><b>RM ${tx.total.toFixed(2)}</b></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Jumlah:</span><b>${fmtRM(tx.total)}</b></div>
                         <div style="display:flex; justify-content:space-between;"><span>Tarikh:</span><b>${new Date(tx.date).toLocaleString()}</b></div>
                     </div>
                     <div class="form-group">
@@ -1970,7 +2080,7 @@
                     </div>
                     <div style="margin-bottom: 1rem; padding: 0.85rem; background: #f8fafc; border-radius: var(--radius-md); font-size: 0.88rem;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Jumlah transaksi:</span><b>${txs.length}</b></div>
-                        <div style="display:flex; justify-content:space-between;"><span>Jumlah nilai:</span><b>RM ${txs.reduce((s, t) => s + (t.total || 0), 0).toFixed(2)}</b></div>
+                        <div style="display:flex; justify-content:space-between;"><span>Jumlah nilai:</span><b>${fmtRM(txs.reduce((s, t) => s + (t.total || 0), 0))}</b></div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="reset-confirm-input">Taip <b style="color:var(--danger);">RESET</b> untuk sahkan:</label>
@@ -1991,7 +2101,7 @@
                 localStorage.setItem('vpos_transactions', JSON.stringify([]));
                 _lastWritten.txs.clear();
                 if (window.__fbClearAllTransactions) await window.__fbClearAllTransactions();
-                showToast('✅ Semua resit berjaya dipadam!', 'success');
+                showToast('Semua resit berjaya dipadam!', 'success');
                 closeModal();
                 renderAllViews();
             } catch (err) {
@@ -2019,19 +2129,19 @@
                 const totalSales = vItems.reduce((a, i) => a + (i.quantitySold || 0) * (i.price || 0), 0);
                 return `
                     <tr>
-                        <td><b>${esc(v.id)}</b></td>
-                        <td>${esc(v.name)}</td>
-                        <td>${esc(v.contact || '-')}</td>
-                        <td>${vItems.length} jenis</td>
-                        <td>${totalSold}</td>
-                        <td>${totalRemaining}</td>
-                        <td><b>RM ${totalSales.toFixed(2)}</b></td>
+                        <td data-label="ID"><b>${esc(v.id)}</b></td>
+                        <td data-label="Nama"><b>${esc(v.name)}</b></td>
+                        <td data-label="Hubungi">${esc(v.contact || '-')}</td>
+                        <td data-label="Total Item">${vItems.length} jenis</td>
+                        <td data-label="Terjual">${fmtNum(totalSold)}</td>
+                        <td data-label="Baki">${fmtNum(totalRemaining)}</td>
+                        <td data-label="Total Jualan"><b>${fmtRM(totalSales)}</b></td>
                         <td style="white-space:nowrap;">
                             <button class="btn btn-secondary btn-sm" data-action="edit-vendor" data-id="${esc(v.id)}">Edit</button>
                             <button class="btn btn-danger btn-sm" data-action="delete-vendor" data-id="${esc(v.id)}">Padam</button>
                         </td>
                     </tr>`;
-            }).join('') || '<tr><td colspan="8" style="text-align:center;">Tiada vendor. Klik "+ Tambah Vendor" untuk mula.</td></tr>';
+            }).join('') || emptyRow(8, 'Tiada Vendor', 'Klik "+ Tambah Vendor" untuk mula');
 
             tbody.querySelectorAll('button[data-action]').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -2163,20 +2273,20 @@
                 else if (i.remainingQuantity <= i.lowStockLevel) badge = '<span class="badge badge-warning">LOW STOCK</span>';
                 return `
                     <tr>
-                        <td><b>${esc(i.name)}</b></td>
-                        <td>${v ? esc(v.name) : '-'}</td>
-                        <td>${esc(i.category || 'Umum')}</td>
-                        <td>RM ${(i.price || 0).toFixed(2)}</td>
-                        <td>${i.quantityReceived || 0}</td>
-                        <td>${i.quantitySold || 0}</td>
-                        <td><b>${i.remainingQuantity || 0}</b></td>
-                        <td>${badge}</td>
+                        <td data-label="Item"><b>${esc(i.name)}</b></td>
+                        <td data-label="Vendor">${v ? esc(v.name) : '-'}</td>
+                        <td data-label="Kategori">${esc(i.category || 'Umum')}</td>
+                        <td data-label="Harga">${fmtRM(i.price)}</td>
+                        <td data-label="Diterima">${fmtNum(i.quantityReceived)}</td>
+                        <td data-label="Terjual">${fmtNum(i.quantitySold)}</td>
+                        <td data-label="Baki"><b>${fmtNum(i.remainingQuantity)}</b></td>
+                        <td data-label="Status">${badge}</td>
                         <td style="white-space:nowrap;">
                             <button class="btn btn-secondary btn-sm" data-action="edit-item" data-id="${esc(i.id)}">Edit</button>
                             <button class="btn btn-danger btn-sm" data-action="delete-item" data-id="${esc(i.id)}">Padam</button>
                         </td>
                     </tr>`;
-            }).join('') || '<tr><td colspan="9" style="text-align:center;">Tiada item. Klik "+ Tambah Item" untuk mula.</td></tr>';
+            }).join('') || emptyRow(9, 'Tiada Item', 'Klik "+ Tambah Item" untuk mula');
 
             tbody.querySelectorAll('button[data-action]').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -2314,7 +2424,10 @@
                 const vItems = items.filter(i => i.vendorId === vId);
                 const container = document.getElementById('tracking-content');
                 if (!v) {
-                    container.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Tiada vendor. Tambah vendor di menu Vendors.</p>';
+                    container.innerHTML = `<div class="pos-empty">
+                        <div class="pos-empty-title">Tiada Vendor</div>
+                        <div class="pos-empty-sub">Tambah vendor di menu Vendors.</div>
+                    </div>`;
                     return;
                 }
                 container.innerHTML = `
@@ -2322,18 +2435,18 @@
                         <h3>${esc(v.name)}</h3>
                         <p style="color:var(--text-muted); font-size:0.85rem;">Tel: ${esc(v.contact || '-')}</p>
                     </div>
-                    <div class="table-container">
+                    <div class="table-container responsive-cards">
                         <table>
                             <thead><tr><th>Item</th><th>Diterima</th><th>Terjual</th><th>Baki</th><th>Nilai Jualan</th></tr></thead>
                             <tbody>
                                 ${vItems.map(i => `
                                     <tr>
-                                        <td><b>${esc(i.name)}</b></td>
-                                        <td>${i.quantityReceived || 0}</td>
-                                        <td>${i.quantitySold || 0}</td>
-                                        <td><b>${i.remainingQuantity || 0}</b></td>
-                                        <td>RM ${((i.quantitySold || 0) * (i.price || 0)).toFixed(2)}</td>
-                                    </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;">Tiada item untuk vendor ini.</td></tr>'}
+                                        <td data-label="Item"><b>${esc(i.name)}</b></td>
+                                        <td data-label="Diterima">${fmtNum(i.quantityReceived)}</td>
+                                        <td data-label="Terjual">${fmtNum(i.quantitySold)}</td>
+                                        <td data-label="Baki"><b>${fmtNum(i.remainingQuantity)}</b></td>
+                                        <td data-label="Nilai Jualan">${fmtRM((i.quantitySold || 0) * (i.price || 0))}</td>
+                                    </tr>`).join('') || emptyRow(5, 'Tiada Item', 'Vendor ini belum mempunyai item')}
                             </tbody>
                         </table>
                     </div>`;
@@ -2381,20 +2494,20 @@
                 const itemsText = t.items.map(i => `${i.name} (${i.qty})`).join(', ');
                 return `
                     <tr style="${rowStyle}">
-                        <td><b>${esc(t.receiptNumber)}</b></td>
-                        <td>${new Date(t.date).toLocaleString()}</td>
-                        <td>${esc(itemsText)}</td>
-                        <td><b>RM ${(t.total || 0).toFixed(2)}</b></td>
-                        <td><span class="badge badge-info">${esc(t.paymentMethod)}</span></td>
-                        <td>${statusBadge}</td>
+                        <td data-label="Receipt"><b>${esc(t.receiptNumber)}</b></td>
+                        <td data-label="Tarikh">${new Date(t.date).toLocaleString()}</td>
+                        <td data-label="Item">${esc(itemsText)}</td>
+                        <td data-label="Jumlah"><b>${fmtRM(t.total)}</b></td>
+                        <td data-label="Bayaran"><span class="badge badge-info">${esc(t.paymentMethod)}</span></td>
+                        <td data-label="Status">${statusBadge}</td>
                         <td>
-                            <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                            <div style="display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end;">
                                 <button class="btn btn-secondary btn-sm" data-action="view-receipt" data-id="${esc(t.id)}">Resit</button>
                                 ${status === 'COMPLETED' ? `<button class="btn btn-danger btn-sm" data-action="cancel-tx" data-id="${esc(t.id)}">Cancel</button>` : ''}
                             </div>
                         </td>
                     </tr>`;
-            }).join('') || '<tr><td colspan="7" style="text-align:center;">Tiada sejarah jualan.</td></tr>';
+            }).join('') || emptyRow(7, 'Tiada Sejarah Jualan', 'Transaksi akan muncul di sini selepas jualan pertama');
 
             tbody.querySelectorAll('button[data-action]').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -2428,7 +2541,7 @@
                 return `
                     <div style="margin-bottom: 1rem;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-weight:700;">
-                            <span>${esc(v.name)}</span><span>${totalSold} / ${totalReceived} (${percent}%)</span>
+                            <span>${esc(v.name)}</span><span>${fmtNum(totalSold)} / ${fmtNum(totalReceived)} (${percent}%)</span>
                         </div>
                         <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${percent}%;"></div></div>
                     </div>`;
@@ -2439,7 +2552,7 @@
             topItemsEl.innerHTML = sortedItems.map(i => `
                 <div style="display:flex; justify-content:space-between; padding:0.6rem 0; border-bottom:1px solid var(--border);">
                     <span><b>${esc(i.name)}</b></span>
-                    <span style="font-weight:700; color:var(--primary);">${i.quantitySold || 0} terjual</span>
+                    <span style="font-weight:700; color:var(--primary);">${fmtNum(i.quantitySold)} terjual</span>
                 </div>`).join('') || '<p style="text-align:center; color:var(--text-muted);">Tiada item.</p>';
         }
 
@@ -2468,13 +2581,6 @@
         }
         window.renderAllViews = renderAllViews;
 
-        /* ═══════════════════════════════════════════════
-           SERVICE WORKER
-           ═══════════════════════════════════════════════ */
-        // ⚠️ DIKELUARKAN — Chrome TIDAK benarkan Service Worker daftar dari blob: URL.
-        // Untuk production, letak sw.js sebagai fail berasingan dan daftar guna:
-        //   navigator.serviceWorker.register('./sw.js', { scope: './' })
-        // Kod yang cuba daftar blob URL hanya akan throw error + kotorkan console.
         console.info('ℹ️ Service Worker dilangkau (guna fail sw.js berasingan untuk production).');
 
         /* ═══════════════════════════════════════════════
@@ -2494,12 +2600,12 @@
             }
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') showToast('🎉 App berjaya di-Install!', 'success');
+            if (outcome === 'accepted') showToast('App berjaya di-Install!', 'success');
             deferredPrompt = null;
             installBtn.style.display = 'none';
         });
         window.addEventListener('appinstalled', () => {
-            showToast('🎉 VendorPOS telah di-Install!', 'success');
+            showToast('VendorPOS telah di-Install!', 'success');
             if (installBtn) installBtn.style.display = 'none';
             deferredPrompt = null;
         });
@@ -2511,8 +2617,8 @@
         function updateOnlineStatus() {
             offlineBar.classList.toggle('show', !navigator.onLine);
         }
-        window.addEventListener('online', () => { updateOnlineStatus(); showToast('✅ Kembali ONLINE', 'success'); });
-        window.addEventListener('offline', () => { updateOnlineStatus(); showToast('📴 Anda OFFLINE', 'warning'); });
+        window.addEventListener('online', () => { updateOnlineStatus(); showToast('Kembali ONLINE', 'success'); });
+        window.addEventListener('offline', () => { updateOnlineStatus(); showToast('Anda OFFLINE', 'warning'); });
         updateOnlineStatus();
 
         /* ═══════════════════════════════════════════════
@@ -2526,7 +2632,7 @@
                 const logo = document.getElementById('splash-logo');
                 if (logo) logo.innerHTML = `<img src="${esc(url)}" alt="VendorPOS">`;
             };
-            img.onerror = () => { /* kekal huruf "V" */ };
+            img.onerror = () => { };
             img.src = url;
         })();
 
