@@ -1066,7 +1066,9 @@
     <div id="toast-container"></div>
     <div id="offline-bar">📴 Anda sedang OFFLINE — data mungkin tidak disegerakkan</div>
 
-    <!-- FIREBASE INITIALIZATION -->
+    <!-- ═══════════════════════════════════════════════════════════
+         FIREBASE INITIALIZATION — FIXED (non-blocking)
+         ═══════════════════════════════════════════════════════════ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, set, get, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -1079,23 +1081,21 @@
             projectId: "vendorsistem",
             storageBucket: "vendorsistem.firebasestorage.app",
             messagingSenderId: "33345214210",
-            appId: "1:33345214210:web:85544f732914ab5eaa941b",
-            measurementId: "G-WTTDLGSRXW"
+            appId: "1:33345214210:web:85544f732914ab5eaa941b"
+            // ⚠️ measurementId dibuang — ia menyebabkan analytics fetch hang kat sesetengah device Android
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
 
-        let analytics = null;
-        try {
-            const mod = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js");
-            analytics = mod.getAnalytics(app);
-        } catch (err) {
-            console.warn('⚠️ Analytics tidak tersedia:', err?.message);
-        }
+        // ⚡ Analytics — NON-BLOCKING. Jangan `await` di top-level.
+        // Kalau lambat/gagal, tak akan halang app boot.
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js")
+            .then(mod => { try { mod.getAnalytics(app); } catch (e) { console.warn('Analytics init fail:', e?.message); } })
+            .catch(err => console.warn('⚠️ Analytics tidak tersedia:', err?.message));
 
-        window.__fb = { app, db, auth, analytics };
+        window.__fb = { app, db, auth };
         window.__fbReady = false;
 
         window.__fbSignIn = (email, password) => signInWithEmailAndPassword(auth, email, password);
@@ -1148,7 +1148,15 @@
             } catch (err) { return false; }
         };
 
-        async function bootstrapFromCloud() {
+        // ✅ SELESAI DEFINE semua API — terus tanda ready & dispatch event.
+        // JANGAN tunggu baca database. Itu punca app hang bila network slow.
+        window.__fbReady = true;
+        window.dispatchEvent(new Event('firebase-ready'));
+        console.log('✅ Firebase API ready (sync event fired).');
+
+        // ⚡ Bootstrap data dari cloud — JALAN DI BELAKANG.
+        // UI boleh mula terus, data akan sync bila siap.
+        (async function bootstrapFromCloud() {
             try {
                 const [v, i, t] = await Promise.all([
                     window.__fbGetVendors(),
@@ -1162,26 +1170,29 @@
                     localStorage.setItem('vpos_transactions', JSON.stringify(t));
                     console.log('✅ Data dimuat dari Firebase RTDB:',
                         `vendors=${v.length}, items=${i.length}, transactions=${t.length}`);
+                    // Refresh UI kalau app dah render
+                    try { window.renderAllViews?.(); } catch (_) {}
                 } else {
                     console.log('ℹ️ Cloud kosong — kekalkan data local.');
                 }
             } catch (err) {
-                console.warn('⚠️ Gagal muat dari RTDB:', err);
+                console.warn('⚠️ Gagal muat dari RTDB (offline?):', err?.message || err);
                 if (!localStorage.getItem('vpos_vendors')) localStorage.setItem('vpos_vendors', '[]');
                 if (!localStorage.getItem('vpos_items')) localStorage.setItem('vpos_items', '[]');
                 if (!localStorage.getItem('vpos_transactions')) localStorage.setItem('vpos_transactions', '[]');
-            } finally {
-                window.__fbReady = true;
-                window.dispatchEvent(new Event('firebase-ready'));
             }
-        }
-        bootstrapFromCloud();
+        })();
 
+        // Realtime subscriptions — lepas 2s, tak kritikal
         setTimeout(() => {
-            window.__fbSubscribeVendors(() => window.renderAllViews?.());
-            window.__fbSubscribeItems(() => window.renderAllViews?.());
-            window.__fbSubscribeTransactions(() => window.renderAllViews?.());
-        }, 2500);
+            try {
+                window.__fbSubscribeVendors(() => window.renderAllViews?.());
+                window.__fbSubscribeItems(() => window.renderAllViews?.());
+                window.__fbSubscribeTransactions(() => window.renderAllViews?.());
+            } catch (e) {
+                console.warn('Subscribe fail:', e);
+            }
+        }, 2000);
     </script>
 
     <!-- MAIN APPLICATION -->
@@ -1329,7 +1340,11 @@
         }
 
         function attachAuthListener() {
-            if (!window.__fbOnAuthChange) return;
+            if (!window.__fbOnAuthChange) {
+                console.warn('⚠️ __fbOnAuthChange belum sedia — retry 1s');
+                setTimeout(attachAuthListener, 1000);
+                return;
+            }
             window.__fbOnAuthChange((user) => {
                 State.authResolved = true;
                 if (user) {
@@ -1344,8 +1359,24 @@
                 }
             });
         }
-        if (window.__fbReady) attachAuthListener();
-        else window.addEventListener('firebase-ready', attachAuthListener, { once: true });
+
+        // ✅ FIX: fallback — kalau event tak fire, tetap pasang dalam 4s.
+        // Ini elak "blank forever" bila event firebase-ready tersekat.
+        let _authAttached = false;
+        function tryAttachAuth() {
+            if (_authAttached) return;
+            _authAttached = true;
+            attachAuthListener();
+        }
+        if (window.__fbReady) {
+            tryAttachAuth();
+        } else {
+            window.addEventListener('firebase-ready', tryAttachAuth, { once: true });
+            setTimeout(tryAttachAuth, 4000);
+            setTimeout(() => {
+                if (window.__fbReady) tryAttachAuth();
+            }, 6000);
+        }
 
         setTimeout(() => {
             document.getElementById('splash-loading').style.display = 'none';
@@ -2440,43 +2471,11 @@
         /* ═══════════════════════════════════════════════
            SERVICE WORKER
            ═══════════════════════════════════════════════ */
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swCode = `
-                    const CACHE_NAME = 'vpos-cache-v4';
-                    const PRECACHE = ['./'];
-                    self.addEventListener('install', (e) => {
-                        e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(PRECACHE).catch(() => {})).then(() => self.skipWaiting()));
-                    });
-                    self.addEventListener('activate', (e) => {
-                        e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
-                    });
-                    self.addEventListener('fetch', (e) => {
-                        const req = e.request;
-                        if (req.method !== 'GET') return;
-                        const url = new URL(req.url);
-                        if (url.hostname.includes('firebase') || url.hostname.includes('googleapis.com') || url.hostname.includes('gstatic.com') || url.hostname.includes('flow.google.com')) return;
-                        e.respondWith(fetch(req).then((res) => {
-                            if (res && res.status === 200 && res.type === 'basic') {
-                                const copy = res.clone();
-                                caches.open(CACHE_NAME).then((c) => c.put(req, copy)).catch(() => {});
-                            }
-                            return res;
-                        }).catch(() => caches.match(req).then((r) => r || caches.match('./'))));
-                    });
-                `;
-                try {
-                    const swUrl = URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' }));
-                    navigator.serviceWorker.register(swUrl, { scope: './' })
-                        .then((reg) => console.log('✅ Service Worker didaftarkan:', reg.scope))
-                        .catch((err) => {
-                            console.info('ℹ️ SW tidak didaftarkan (perlu fail sebenar untuk production):', err.message);
-                        });
-                } catch (err) {
-                    console.info('ℹ️ SW skip:', err.message);
-                }
-            });
-        }
+        // ⚠️ DIKELUARKAN — Chrome TIDAK benarkan Service Worker daftar dari blob: URL.
+        // Untuk production, letak sw.js sebagai fail berasingan dan daftar guna:
+        //   navigator.serviceWorker.register('./sw.js', { scope: './' })
+        // Kod yang cuba daftar blob URL hanya akan throw error + kotorkan console.
+        console.info('ℹ️ Service Worker dilangkau (guna fail sw.js berasingan untuk production).');
 
         /* ═══════════════════════════════════════════════
            INSTALL PROMPT
