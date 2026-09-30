@@ -233,9 +233,49 @@
         .form-control { width: 100%; padding: 0.7rem 0.9rem; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 0.9rem; color: var(--text-main); background: var(--surface); transition: border-color var(--transition-fast); }
         .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
 
-        /* ═══════════════════════════════════════════════════════════
-           POS SYSTEM — REDESIGNED
-           ═══════════════════════════════════════════════════════════ */
+        /* ═══ IMAGE UPLOAD (BARU) ═══ */
+        .image-upload-wrap {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 10px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+        }
+        .image-preview-box {
+            width: 96px;
+            height: 96px;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #ffffff;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .image-preview-box img { width: 100%; height: 100%; object-fit: cover; }
+        .image-preview-box .placeholder { color: var(--text-muted); font-size: 0.68rem; text-align: center; padding: 6px; line-height: 1.35; font-weight: 600; }
+        .image-upload-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+        .image-upload-info small { font-size: 0.7rem; color: var(--text-muted); display: block; line-height: 1.4; }
+        .image-upload-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        /* Thumbnail dalam table */
+        .item-thumb-cell { display: flex; align-items: center; gap: 10px; min-width: 0; }
+        .item-thumb {
+            width: 40px; height: 40px; border-radius: 8px; object-fit: cover;
+            border: 1px solid var(--border); background: #f1f5f9; display: block; flex-shrink: 0;
+        }
+        .item-thumb-empty {
+            width: 40px; height: 40px; border-radius: 8px; border: 1px dashed var(--border);
+            background: #f8fafc; display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted); font-size: 1rem; flex-shrink: 0;
+        }
+        .item-thumb-name { overflow: hidden; text-overflow: ellipsis; }
+
+        /* ═══ POS SYSTEM — REDESIGNED ═══ */
         .pos-layout {
             display: grid;
             grid-template-columns: 1fr;
@@ -362,7 +402,7 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            padding: 0.875rem;
+            padding: 0.75rem;
             display: flex;
             flex-direction: column;
             gap: 0.4rem;
@@ -370,7 +410,6 @@
             transition: all var(--transition-fast);
             position: relative;
             user-select: none;
-            min-height: 118px;
         }
         .product-card:hover:not(.disabled) {
             border-color: var(--primary);
@@ -383,6 +422,24 @@
             cursor: not-allowed;
             filter: grayscale(0.85);
             background: #f8fafc;
+        }
+        /* Thumbnail dalam product card */
+        .product-card .item-thumb-wrap {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2px;
+        }
+        .product-card .item-thumb-wrap img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+        }
+        .product-card .item-thumb-wrap .no-img {
+            color: var(--text-muted); font-size: 1.8rem; opacity: 0.55;
         }
         .product-card .vendor-tag {
             font-size: 0.65rem;
@@ -446,6 +503,7 @@
             box-shadow: 0 3px 8px rgba(37, 99, 235, 0.45);
             border: 2px solid var(--bg-body);
             animation: badgePop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 2;
         }
         @keyframes badgePop {
             0% { transform: scale(0.5); opacity: 0; }
@@ -574,6 +632,12 @@
             transition: border-color var(--transition-fast);
         }
         .cart-item:hover { border-color: var(--border); }
+        .cart-item-thumb {
+            width: 38px; height: 38px; border-radius: 8px; object-fit: cover;
+            background: #f1f5f9; border: 1px solid var(--border); flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted); font-size: 0.9rem;
+        }
         .cart-item-info { flex: 1; min-width: 0; }
         .cart-item-title {
             font-size: 0.85rem;
@@ -710,9 +774,7 @@
         .toolbar .toolbar-filters { display: flex; gap: 10px; flex: 1; min-width: 0; flex-wrap: wrap; }
         .toolbar .form-control { max-width: 240px; }
 
-        /* ══════════════════════════════════════════════════════════
-           MOBILE / TABLET
-           ══════════════════════════════════════════════════════════ */
+        /* ═══ MOBILE / TABLET ═══ */
         @media (max-width: 1023px) {
             .sidebar { transform: translateX(-100%); width: 82vw; max-width: 300px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); }
             .sidebar.active { transform: translateX(0); }
@@ -745,7 +807,6 @@
             th { padding: 0.65rem 0.75rem; font-size: 0.72rem; }
             td { padding: 0.7rem 0.75rem; font-size: 0.82rem; }
 
-            /* ═══ Mobile Card View untuk Table ═══ */
             .table-container.responsive-cards { overflow-x: visible; background: transparent; border: none; box-shadow: none; }
             .table-container.responsive-cards table,
             .table-container.responsive-cards thead,
@@ -797,7 +858,6 @@
 
             .search-box { max-width: 100%; flex: 1; }
 
-            /* ── POS mobile ── */
             .pos-layout {
                 height: auto;
                 min-height: calc(100dvh - var(--header-height) - 1.75rem);
@@ -818,7 +878,7 @@
                 overflow-y: visible;
                 padding: 3px;
             }
-            .product-card { padding: 0.7rem; border-radius: var(--radius-sm); min-height: 106px; }
+            .product-card { padding: 0.6rem; border-radius: var(--radius-sm); }
             .product-card .vendor-tag { font-size: 0.6rem; }
             .product-card .item-name { font-size: 0.82rem; }
             .product-card .item-price { font-size: 0.95rem; }
@@ -830,6 +890,7 @@
             .cart-title { font-size: 0.88rem; }
             .cart-items { max-height: 34vh; padding: 0.6rem; }
             .cart-item { padding: 0.6rem; }
+            .cart-item-thumb { width: 34px; height: 34px; }
             .cart-item-title { font-size: 0.82rem; }
             .cart-item-sub { font-size: 0.68rem; }
             .cart-item-subtotal { font-size: 0.8rem; }
@@ -865,6 +926,10 @@
 
             .toolbar .form-control { max-width: 100%; flex: 1; }
             .toolbar .toolbar-filters { width: 100%; }
+
+            /* Mobile image upload — susun menegak */
+            .image-upload-wrap { gap: 10px; padding: 8px; }
+            .image-preview-box { width: 80px; height: 80px; }
         }
 
         @media (max-width: 380px) {
@@ -1111,7 +1176,7 @@
                 </div>
                 <div class="table-container responsive-cards">
                     <table id="items-table">
-                        <thead><tr><th>Nama Item</th><th>Vendor</th><th>Kategori</th><th>Harga</th><th>Diterima</th><th>Terjual</th><th>Baki</th><th>Status</th><th>Tindakan</th></tr></thead>
+                        <thead><tr><th>Item</th><th>Vendor</th><th>Kategori</th><th>Harga</th><th>Diterima</th><th>Terjual</th><th>Baki</th><th>Status</th><th>Tindakan</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -1340,6 +1405,54 @@
                     <div class="pos-empty-sub">${subtitle}</div>
                 </div>
             </td></tr>`;
+        }
+
+        /* ═══════════════════════════════════════════════
+           IMAGE COMPRESSION HELPER (BARU)
+           Convert file → base64 (dimampatkan)
+           ═══════════════════════════════════════════════ */
+        function compressImage(file, maxSize = 400, quality = 0.7) {
+            return new Promise((resolve, reject) => {
+                if (!file) { reject(new Error('Tiada fail')); return; }
+                if (!file.type.startsWith('image/')) { reject(new Error('Bukan fail gambar')); return; }
+
+                const reader = new FileReader();
+                reader.onerror = () => reject(new Error('Gagal baca fail'));
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onerror = () => reject(new Error('Gagal load gambar'));
+                    img.onload = () => {
+                        try {
+                            let { width, height } = img;
+                            if (width > height) {
+                                if (width > maxSize) { height = Math.round((height * maxSize) / width); width = maxSize; }
+                            } else {
+                                if (height > maxSize) { width = Math.round((width * maxSize) / height); height = maxSize; }
+                            }
+                            const canvas = document.createElement('canvas');
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            // Background putih (untuk PNG transparent → JPEG)
+                            ctx.fillStyle = '#ffffff';
+                            ctx.fillRect(0, 0, width, height);
+                            ctx.drawImage(img, 0, 0, width, height);
+                            const dataUri = canvas.toDataURL('image/jpeg', quality);
+                            resolve(dataUri);
+                        } catch (err) { reject(err); }
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Return HTML untuk thumbnail (atau placeholder)
+        function itemThumbHTML(imageData, alt = '') {
+            if (imageData) {
+                return `<img src="${esc(imageData)}" class="item-thumb" alt="${esc(alt)}" loading="lazy">`;
+            }
+            return `<div class="item-thumb-empty">📦</div>`;
         }
 
         /* ═══════════════════════════════════════════════
@@ -1613,7 +1726,12 @@
                 const badgeClass = i.remainingQuantity === 0 ? 'badge-danger' : 'badge-warning';
                 const statusText = i.remainingQuantity === 0 ? 'SOLD OUT' : 'LOW STOCK';
                 return `<tr>
-                    <td data-label="Item"><b>${esc(i.name)}</b></td>
+                    <td data-label="Item">
+                        <div class="item-thumb-cell">
+                            ${itemThumbHTML(i.imageData, i.name)}
+                            <b>${esc(i.name)}</b>
+                        </div>
+                    </td>
                     <td data-label="Vendor">${v ? esc(v.name) : '-'}</td>
                     <td data-label="Baki">${fmtNum(i.remainingQuantity)}</td>
                     <td data-label="Status"><span class="badge ${badgeClass}">${statusText}</span></td>
@@ -1700,9 +1818,14 @@
                 if (isOut) { dotColor = 'var(--danger)'; stockLabel = 'Habis'; }
                 else if (stock <= (i.lowStockLevel || 5)) { dotColor = 'var(--warning)'; }
 
+                const thumbHTML = i.imageData
+                    ? `<img src="${esc(i.imageData)}" alt="${esc(i.name)}" loading="lazy">`
+                    : `<span class="no-img">📦</span>`;
+
                 return `
                     <div class="product-card ${isOut ? 'disabled' : ''}" data-item-id="${esc(i.id)}">
                         ${inCartQty > 0 ? `<div class="in-cart-badge">${inCartQty}</div>` : ''}
+                        <div class="item-thumb-wrap">${thumbHTML}</div>
                         <div class="vendor-tag">${v ? esc(v.name) : ''}</div>
                         <div class="item-name">${esc(i.name)}</div>
                         <div class="item-price">${fmtRM(i.price)}</div>
@@ -1746,7 +1869,14 @@
                 cartItem.qty += 1;
                 cartItem.subtotal = cartItem.qty * cartItem.price;
             } else {
-                State.cart.push({ itemId: item.id, name: item.name, price: item.price, qty: 1, subtotal: item.price });
+                State.cart.push({
+                    itemId: item.id,
+                    name: item.name,
+                    price: item.price,
+                    qty: 1,
+                    subtotal: item.price,
+                    imageData: item.imageData || null  // ← snapshot gambar masa add
+                });
             }
             renderPOS();
         }
@@ -1788,8 +1918,13 @@
                         <div class="cart-empty-sub">Pilih item di sebelah kiri untuk mula</div>
                     </div>`;
             } else {
-                cartContainer.innerHTML = State.cart.map(c => `
+                cartContainer.innerHTML = State.cart.map(c => {
+                    const thumb = c.imageData
+                        ? `<img src="${esc(c.imageData)}" class="cart-item-thumb" alt="${esc(c.name)}">`
+                        : `<div class="cart-item-thumb">📦</div>`;
+                    return `
                     <div class="cart-item">
+                        ${thumb}
                         <div class="cart-item-info">
                             <div class="cart-item-title">${esc(c.name)}</div>
                             <div class="cart-item-sub">${fmtRM(c.price)} × ${c.qty}</div>
@@ -1802,8 +1937,8 @@
                         <div class="cart-item-right">
                             <div class="cart-item-subtotal">${fmtRM(c.subtotal)}</div>
                         </div>
-                    </div>
-                `).join('');
+                    </div>`;
+                }).join('');
 
                 cartContainer.querySelectorAll('.qty-btn').forEach(b => {
                     b.addEventListener('click', (e) => {
@@ -1937,11 +2072,20 @@
             });
             Storage.saveItems(items);
 
+            // Simpan snapshot items dalam transaction (tanpa imageData untuk jimat saiz DB)
+            const txItems = State.cart.map(c => ({
+                itemId: c.itemId,
+                name: c.name,
+                price: c.price,
+                qty: c.qty,
+                subtotal: c.subtotal
+            }));
+
             const newTx = {
                 id: `TX-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
                 receiptNumber: generateReceiptNumber(),
                 date: new Date().toISOString(),
-                items: [...State.cart],
+                items: txItems,
                 total, paymentMethod: method,
                 amountReceived, change,
                 status: 'COMPLETED', cancelledAt: null, cancelReason: null
@@ -2108,6 +2252,7 @@
                 showToast('Gagal reset. Sila cuba lagi.', 'danger');
             }
         }
+        window.openResetTransactionsModal = openResetTransactionsModal;
 
         /* ═══════════════════════════════════════════════
            VENDOR MANAGEMENT
@@ -2241,8 +2386,10 @@
         }
 
         /* ═══════════════════════════════════════════════
-           ITEM MANAGEMENT
+           ITEM MANAGEMENT (dengan gambar base64)
            ═══════════════════════════════════════════════ */
+        let _currentItemImageData = null;  // simpan base64 sementara semasa modal terbuka
+
         function renderItems() {
             const items = Storage.getItems();
             const vendors = Storage.getVendors();
@@ -2273,7 +2420,12 @@
                 else if (i.remainingQuantity <= i.lowStockLevel) badge = '<span class="badge badge-warning">LOW STOCK</span>';
                 return `
                     <tr>
-                        <td data-label="Item"><b>${esc(i.name)}</b></td>
+                        <td data-label="Item">
+                            <div class="item-thumb-cell">
+                                ${itemThumbHTML(i.imageData, i.name)}
+                                <b class="item-thumb-name">${esc(i.name)}</b>
+                            </div>
+                        </td>
                         <td data-label="Vendor">${v ? esc(v.name) : '-'}</td>
                         <td data-label="Kategori">${esc(i.category || 'Umum')}</td>
                         <td data-label="Harga">${fmtRM(i.price)}</td>
@@ -2300,9 +2452,77 @@
         document.getElementById('item-search').addEventListener('input', debounce(renderItems, 150));
         document.getElementById('item-vendor-filter').addEventListener('change', renderItems);
 
+        // HTML untuk section image upload (dipakai dalam add & edit modal)
+        function imageUploadHTML() {
+            return `
+                <div class="form-group">
+                    <label class="form-label">Gambar Item (pilihan)</label>
+                    <div class="image-upload-wrap">
+                        <div class="image-preview-box" id="i-image-preview">
+                            <span class="placeholder">Tiada<br>gambar</span>
+                        </div>
+                        <div class="image-upload-info">
+                            <div class="image-upload-actions">
+                                <input type="file" id="i-image-input" accept="image/*" style="display:none;">
+                                <button type="button" class="btn btn-secondary btn-sm" id="i-image-btn">📷 Pilih Gambar</button>
+                                <button type="button" class="btn btn-danger btn-sm" id="i-image-remove" style="display:none;">🗑️ Hapus</button>
+                            </div>
+                            <small>Format JPG/PNG. Gambar akan dimampatkan secara automatik (max 400px, JPEG).</small>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        // Set preview + bind events (dipanggil selepas modal dibuka)
+        function bindImageUpload() {
+            const previewEl = document.getElementById('i-image-preview');
+            const fileInput = document.getElementById('i-image-input');
+            const pickBtn = document.getElementById('i-image-btn');
+            const removeBtn = document.getElementById('i-image-remove');
+
+            const renderPreview = () => {
+                if (_currentItemImageData) {
+                    previewEl.innerHTML = `<img src="${esc(_currentItemImageData)}" alt="preview">`;
+                    removeBtn.style.display = 'inline-flex';
+                } else {
+                    previewEl.innerHTML = `<span class="placeholder">Tiada<br>gambar</span>`;
+                    removeBtn.style.display = 'none';
+                }
+            };
+
+            pickBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', async (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                pickBtn.disabled = true;
+                const oldTxt = pickBtn.textContent;
+                pickBtn.textContent = 'Memproses...';
+                try {
+                    const dataUri = await compressImage(file, 400, 0.7);
+                    _currentItemImageData = dataUri;
+                    renderPreview();
+                    showToast('Gambar berjaya dimuat!', 'success');
+                } catch (err) {
+                    showToast('Gagal proses gambar: ' + (err?.message || err), 'danger');
+                } finally {
+                    pickBtn.disabled = false;
+                    pickBtn.textContent = oldTxt;
+                    fileInput.value = ''; // reset supaya boleh pilih fail sama semula
+                }
+            });
+
+            removeBtn.addEventListener('click', () => {
+                _currentItemImageData = null;
+                renderPreview();
+            });
+
+            renderPreview();
+        }
+
         document.getElementById('add-item-btn').addEventListener('click', () => {
             const vendors = Storage.getVendors();
             if (vendors.length === 0) { showToast('Sila tambah vendor terlebih dahulu!', 'warning'); return; }
+            _currentItemImageData = null;
             openModal({
                 title: 'Tambah Item Baru',
                 bodyHTML: `
@@ -2311,13 +2531,15 @@
                     <div class="form-group"><label class="form-label" for="i-category">Kategori</label><input type="text" id="i-category" class="form-control" placeholder="Makanan / Minuman"></div>
                     <div class="form-group"><label class="form-label" for="i-price">Harga Jualan (RM)</label><input type="number" step="0.10" inputmode="decimal" id="i-price" class="form-control" placeholder="4.00"></div>
                     <div class="form-group"><label class="form-label" for="i-qty">Kuantiti Diterima</label><input type="number" inputmode="numeric" id="i-qty" class="form-control" placeholder="50"></div>
-                    <div class="form-group"><label class="form-label" for="i-low">Paras Amaran Stok Rendah</label><input type="number" inputmode="numeric" id="i-low" class="form-control" value="10"></div>`,
+                    <div class="form-group"><label class="form-label" for="i-low">Paras Amaran Stok Rendah</label><input type="number" inputmode="numeric" id="i-low" class="form-control" value="10"></div>
+                    ${imageUploadHTML()}`,
                 footerHTML: `
                     <button class="btn btn-secondary" id="i-abort">Batal</button>
                     <button class="btn btn-primary" id="i-save">Simpan Item</button>`
             });
             document.getElementById('i-abort').addEventListener('click', closeModal);
             document.getElementById('i-save').addEventListener('click', () => saveItem());
+            bindImageUpload();
         });
 
         function saveItem(id = null) {
@@ -2339,17 +2561,25 @@
                     showToast(`Kuantiti tidak boleh kurang dari yang telah terjual (${item.quantitySold}).`, 'danger');
                     return;
                 }
-                Object.assign(item, { name, vendorId, category, price, quantityReceived: qty, lowStockLevel: low });
+                Object.assign(item, {
+                    name, vendorId, category, price,
+                    quantityReceived: qty,
+                    lowStockLevel: low,
+                    imageData: _currentItemImageData || null
+                });
                 item.remainingQuantity = item.quantityReceived - (item.quantitySold || 0);
             } else {
                 items.push({
                     id: `ITM-${Date.now().toString().slice(-6)}-${Math.random().toString(36).slice(2, 5)}`,
                     vendorId, name, category, price,
-                    quantityReceived: qty, quantitySold: 0, remainingQuantity: qty, lowStockLevel: low
+                    quantityReceived: qty, quantitySold: 0, remainingQuantity: qty,
+                    lowStockLevel: low,
+                    imageData: _currentItemImageData || null
                 });
             }
             Storage.saveItems(items);
             showToast('Item berjaya disimpan!', 'success');
+            _currentItemImageData = null;
             closeModal();
             renderAllViews();
         }
@@ -2359,6 +2589,8 @@
             const vendors = Storage.getVendors();
             const item = items.find(i => i.id === id);
             if (!item) return;
+
+            _currentItemImageData = item.imageData || null;
             openModal({
                 title: 'Edit Item',
                 bodyHTML: `
@@ -2371,13 +2603,15 @@
                         <input type="number" inputmode="numeric" id="i-qty" class="form-control" value="${item.quantityReceived}">
                         <small style="color: var(--text-muted); font-size: 0.75rem;">Tidak boleh kurang dari ${item.quantitySold || 0} (yang telah terjual)</small>
                     </div>
-                    <div class="form-group"><label class="form-label" for="i-low">Paras Amaran Stok Rendah</label><input type="number" inputmode="numeric" id="i-low" class="form-control" value="${item.lowStockLevel}"></div>`,
+                    <div class="form-group"><label class="form-label" for="i-low">Paras Amaran Stok Rendah</label><input type="number" inputmode="numeric" id="i-low" class="form-control" value="${item.lowStockLevel}"></div>
+                    ${imageUploadHTML()}`,
                 footerHTML: `
                     <button class="btn btn-secondary" id="i-abort">Batal</button>
                     <button class="btn btn-primary" id="i-save">Kemaskini</button>`
             });
             document.getElementById('i-abort').addEventListener('click', closeModal);
             document.getElementById('i-save').addEventListener('click', () => saveItem(item.id));
+            bindImageUpload();
         }
 
         function deleteItem(id) {
@@ -2441,7 +2675,12 @@
                             <tbody>
                                 ${vItems.map(i => `
                                     <tr>
-                                        <td data-label="Item"><b>${esc(i.name)}</b></td>
+                                        <td data-label="Item">
+                                            <div class="item-thumb-cell">
+                                                ${itemThumbHTML(i.imageData, i.name)}
+                                                <b>${esc(i.name)}</b>
+                                            </div>
+                                        </td>
                                         <td data-label="Diterima">${fmtNum(i.quantityReceived)}</td>
                                         <td data-label="Terjual">${fmtNum(i.quantitySold)}</td>
                                         <td data-label="Baki"><b>${fmtNum(i.remainingQuantity)}</b></td>
@@ -2550,9 +2789,12 @@
             const topItemsEl = document.getElementById('report-top-items');
             const sortedItems = [...items].sort((a, b) => (b.quantitySold || 0) - (a.quantitySold || 0)).slice(0, 5);
             topItemsEl.innerHTML = sortedItems.map(i => `
-                <div style="display:flex; justify-content:space-between; padding:0.6rem 0; border-bottom:1px solid var(--border);">
-                    <span><b>${esc(i.name)}</b></span>
-                    <span style="font-weight:700; color:var(--primary);">${fmtNum(i.quantitySold)} terjual</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid var(--border); gap:10px;">
+                    <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+                        ${itemThumbHTML(i.imageData, i.name)}
+                        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><b>${esc(i.name)}</b></span>
+                    </div>
+                    <span style="font-weight:700; color:var(--primary); white-space:nowrap;">${fmtNum(i.quantitySold)} terjual</span>
                 </div>`).join('') || '<p style="text-align:center; color:var(--text-muted);">Tiada item.</p>';
         }
 
