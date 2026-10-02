@@ -1,6 +1,4 @@
-Berikut adalah fail HTML penuh yang telah diintegrasikan dengan ciri auto-hide sidebar untuk POS view. Perubahan utama ditandakan dengan komen // ═══ AUTO-HIDE SIDEBAR ═══ dan /* ═══ AUTO-HIDE SIDEBAR ═══ */.
 
-```html
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -2948,42 +2946,3 @@ Berikut adalah fail HTML penuh yang telah diintegrasikan dengan ciri auto-hide s
     </script>
 </body>
 </html>
-```
-
-✅ Ringkasan Perubahan Yang Telah Diintegrasikan
-
-1. CSS (dalam <style>) — Sebelum @media print
-
-Blok CSS pos-view-active ditambah:
-
-· body.pos-view-active .sidebar → auto-slide out ke kiri
-· body.pos-view-active .main-content → margin-left: 0 (guna penuh lebar skrin)
-· body.pos-view-active .menu-toggle-btn → tunjuk butang ☰
-· Media query ≥ 1440px → desktop besar kekal tunjuk sidebar (tak ganggu)
-
-2. JS Handler Menu — Dalam document.querySelectorAll('.menu-item[data-view]')
-
-Baris ditambah:
-
-```js
-document.body.classList.toggle('pos-view-active', viewTarget === 'pos');
-```
-
-3. JS Handler Logout — Dalam logout-btn listener
-
-Baris ditambah:
-
-```js
-document.body.classList.remove('pos-view-active');
-```
-
-🎯 Kesan Tingkah Laku
-
-Peranti Buka POS Sidebar
-iPad Air portrait ✅ Auto-hide Overlay, boleh toggle ☰
-iPad Air landscape ✅ Auto-hide POS guna 100% lebar — lebih lega
-Phone portrait/landscape ✅ Auto-hide Overlay biasa
-Laptop (1024–1439px) ✅ Auto-hide Overlay lebar
-Desktop ≥1440px ❌ Kekal terbuka Sama seperti biasa
-
-Bila pilih view selain POS (Dashboard, Vendors, dll.), sidebar akan auto-buka semula secara automatik. 🎉
