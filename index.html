@@ -7,7 +7,7 @@
     <title>Vendor POS & Item Tracking System</title>
 
     <meta name="description" content="Sistem POS & Penjejakan Item Vendor — jualan, stok, dan laporan dalam satu app.">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#ec4899">
     <meta name="color-scheme" content="light">
 
     <link rel="manifest" id="pwa-manifest">
@@ -25,8 +25,8 @@
         const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
           <defs>
             <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#2563eb"/>
-              <stop offset="100%" stop-color="#1d4ed8"/>
+              <stop offset="0%" stop-color="#ec4899"/>
+              <stop offset="100%" stop-color="#db2777"/>
             </linearGradient>
           </defs>
           <rect width="512" height="512" rx="112" fill="url(#g)"/>
@@ -42,7 +42,7 @@
           start_url: "./", scope: "./", display: "standalone",
           display_override: ["standalone", "minimal-ui"],
           orientation: "portrait-primary",
-          background_color: "#ffffff", theme_color: "#2563eb", lang: "ms",
+          background_color: "#ffffff", theme_color: "#ec4899", lang: "ms",
           categories: ["business", "productivity", "shopping"],
           icons: [
             { src: iconDataUri, sizes: "192x192", type: "image/svg+xml", purpose: "any" },
@@ -61,11 +61,11 @@
 
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --primary-light: #eff6ff;
+            --primary: #ec4899;
+            --primary-hover: #db2777;
+            --primary-light: #fdf2f8;
             --secondary: #64748b;
-            --bg-body: #f8fafc;
+            --bg-body: #fdf6fb;
             --surface: #ffffff;
             --border: #e2e8f0;
             --text-main: #0f172a;
@@ -94,13 +94,13 @@
         body { background-color: var(--bg-body); color: var(--text-main); overflow-x: hidden; min-height: 100vh; min-height: 100dvh; overscroll-behavior-y: contain; }
         #app-container { display: flex; min-height: 100vh; min-height: 100dvh; opacity: 0; transition: opacity 0.4s ease; }
         #app-container.ready { opacity: 1; }
-        .auth-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease; }
+        .auth-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; background: linear-gradient(135deg, #831843 0%, #500724 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease; }
         .auth-overlay.hidden { opacity: 0; pointer-events: none; transform: translateY(-20px); }
         .splash-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); border-radius: var(--radius-lg); padding: 2.5rem; width: 90%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); text-align: center; animation: cardPop 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes cardPop { 0% { transform: scale(0.9) translateY(20px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
-        .brand-logo { width: 72px; height: 72px; background: var(--primary); color: white; border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; margin-bottom: 1rem; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3); overflow: hidden; }
+        .brand-logo { width: 72px; height: 72px; background: var(--primary); color: white; border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; margin-bottom: 1rem; box-shadow: 0 10px 20px rgba(236, 72, 153, 0.35); overflow: hidden; }
         .brand-logo img { width: 100%; height: 100%; object-fit: cover; }
-        .spinner { width: 32px; height: 32px; border: 3px solid rgba(37, 99, 235, 0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 1.5rem auto 0; }
+        .spinner { width: 32px; height: 32px; border: 3px solid rgba(236, 72, 153, 0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 1.5rem auto 0; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         .sidebar { width: var(--sidebar-width); background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; transition: transform var(--transition-normal); }
@@ -119,7 +119,7 @@
         .top-header { background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; position: sticky; top: 0; z-index: 90; padding-top: env(safe-area-inset-top); height: calc(var(--header-height) + env(safe-area-inset-top)); }
         .header-title { font-size: 1.25rem; font-weight: 700; }
         .user-profile { display: flex; align-items: center; gap: 10px; }
-        .avatar { width: 36px; height: 36px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--text-main); font-size: 0.85rem; flex-shrink: 0; }
+        .avatar { width: 36px; height: 36px; background: #fce7f3; color: #be185d; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
 
         .page-view { display: none; padding: 1.5rem; animation: fadeIn 0.3s ease; }
         .page-view.active { display: block; }
@@ -138,14 +138,14 @@
         .badge-danger { background: var(--danger-light); color: var(--danger); }
         .badge-info { background: var(--primary-light); color: var(--primary); }
         .badge-secondary { background: #f1f5f9; color: var(--secondary); }
-        .badge-refund { background: #fce7f3; color: #db2777; }
+        .badge-refund { background: #fce7f3; color: #be185d; }
 
         .table-container { background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: var(--shadow-sm); overflow-x: auto; margin-bottom: 1.5rem; -webkit-overflow-scrolling: touch; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
-        th { background: #f8fafc; padding: 0.85rem 1rem; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+        th { background: #fdf6fb; padding: 0.85rem 1rem; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
         td { padding: 1rem; border-bottom: 1px solid var(--border); color: var(--text-main); vertical-align: middle; }
         tr:last-child td { border-bottom: none; }
-        tr:hover td { background-color: #f1f5f9; }
+        tr:hover td { background-color: #fdf2f8; }
 
         /* ── Section header (seragam) ── */
         .section-header {
@@ -158,7 +158,7 @@
             align-items: center;
             gap: 10px;
             flex-wrap: wrap;
-            background: linear-gradient(to bottom, #ffffff, #fafafa);
+            background: linear-gradient(to bottom, #ffffff, #fdf6fb);
         }
 
         /* ── Search box (seragam dengan icon) ── */
@@ -176,7 +176,7 @@
         }
         .search-box:focus-within {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
         }
         .search-box .search-box-icon {
             position: absolute;
@@ -212,15 +212,15 @@
             #items-table th:last-child,
             #vendors-table th:last-child,
             #sales-table th:last-child {
-                background: #f8fafc;
+                background: #fdf6fb;
                 z-index: 2;
             }
-            tr:hover td:last-child { background-color: #f1f5f9; }
+            tr:hover td:last-child { background-color: #fdf2f8; }
         }
 
         .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0.6rem 1.2rem; border-radius: var(--radius-md); font-weight: 600; font-size: 0.88rem; border: 1px solid transparent; cursor: pointer; transition: all var(--transition-fast); white-space: nowrap; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); }
+        .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25); }
         .btn-secondary { background: #f1f5f9; color: var(--text-main); border-color: var(--border); }
         .btn-secondary:hover { background: #e2e8f0; }
         .btn-danger { background: var(--danger); color: white; }
@@ -231,15 +231,15 @@
         .form-group { margin-bottom: 1.1rem; }
         .form-label { display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text-main); }
         .form-control { width: 100%; padding: 0.7rem 0.9rem; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 0.9rem; color: var(--text-main); background: var(--surface); transition: border-color var(--transition-fast); }
-        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15); }
 
-        /* ═══ IMAGE UPLOAD (BARU) ═══ */
+        /* ═══ IMAGE UPLOAD ═══ */
         .image-upload-wrap {
             display: flex;
             gap: 12px;
             align-items: flex-start;
             padding: 10px;
-            background: #f8fafc;
+            background: #fdf6fb;
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
         }
@@ -270,12 +270,12 @@
         }
         .item-thumb-empty {
             width: 40px; height: 40px; border-radius: 8px; border: 1px dashed var(--border);
-            background: #f8fafc; display: flex; align-items: center; justify-content: center;
+            background: #fdf6fb; display: flex; align-items: center; justify-content: center;
             color: var(--text-muted); font-size: 1rem; flex-shrink: 0;
         }
         .item-thumb-name { overflow: hidden; text-overflow: ellipsis; }
 
-        /* ═══ POS SYSTEM — REDESIGNED ═══ */
+        /* ═══ POS SYSTEM ═══ */
         .pos-layout {
             display: grid;
             grid-template-columns: 1fr;
@@ -307,7 +307,7 @@
         }
         .pos-search-wrap:focus-within {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
         }
         .pos-search-icon {
             position: absolute;
@@ -374,7 +374,7 @@
             background: var(--primary);
             color: white;
             border-color: var(--primary);
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+            box-shadow: 0 4px 10px rgba(236, 72, 153, 0.25);
         }
         .pill-count {
             background: rgba(0, 0, 0, 0.07);
@@ -421,9 +421,8 @@
             opacity: 0.55;
             cursor: not-allowed;
             filter: grayscale(0.85);
-            background: #f8fafc;
+            background: #fdf6fb;
         }
-        /* Thumbnail dalam product card */
         .product-card .item-thumb-wrap {
             width: 100%;
             aspect-ratio: 1 / 1;
@@ -500,7 +499,7 @@
             justify-content: center;
             font-size: 0.72rem;
             font-weight: 800;
-            box-shadow: 0 3px 8px rgba(37, 99, 235, 0.45);
+            box-shadow: 0 3px 8px rgba(236, 72, 153, 0.45);
             border: 2px solid var(--bg-body);
             animation: badgePop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 2;
@@ -553,7 +552,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 8px;
-            background: linear-gradient(to bottom, #ffffff, #fafafa);
+            background: linear-gradient(to bottom, #ffffff, #fdf6fb);
         }
         .cart-title {
             display: flex;
@@ -705,7 +704,7 @@
         .cart-footer {
             padding: 1rem;
             border-top: 1px solid var(--border);
-            background: #fafafa;
+            background: #fdf6fb;
             display: flex;
             flex-direction: column;
             gap: 6px;
@@ -734,11 +733,11 @@
             font-size: 0.95rem;
             font-weight: 800;
             letter-spacing: 0.3px;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);
         }
         .checkout-btn svg { width: 18px; height: 18px; }
         .checkout-btn:disabled {
-            background: #cbd5e1;
+            background: #f9a8d4;
             box-shadow: none;
             color: #fff;
         }
@@ -751,7 +750,7 @@
         .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--surface); z-index: 1; }
         .modal-title { font-size: 1.1rem; font-weight: 800; }
         .modal-body { padding: 1.5rem; }
-        .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: #fafafa; position: sticky; bottom: 0; flex-wrap: wrap; }
+        .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: #fdf6fb; position: sticky; bottom: 0; flex-wrap: wrap; }
 
         #toast-container { position: fixed; top: calc(20px + env(safe-area-inset-top)); right: 20px; left: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; pointer-events: none; }
         .toast { background: var(--surface); color: var(--text-main); padding: 0.85rem 1.25rem; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); border-left: 4px solid var(--primary); display: flex; align-items: center; gap: 10px; font-size: 0.88rem; font-weight: 600; animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1); min-width: 280px; max-width: 100%; pointer-events: auto; }
@@ -763,7 +762,7 @@
         .receipt-box { font-family: 'Courier New', Courier, monospace; background: #fff; padding: 1.5rem; border: 1px dashed var(--border); color: #000; font-size: 0.85rem; line-height: 1.4; }
         .receipt-center { text-align: center; }
         .receipt-line { border-bottom: 1px dashed #000; margin: 8px 0; }
-        .progress-bar-bg { background: #e2e8f0; border-radius: var(--radius-full); height: 8px; width: 100%; overflow: hidden; }
+        .progress-bar-bg { background: #fce7f3; border-radius: var(--radius-full); height: 8px; width: 100%; overflow: hidden; }
         .progress-bar-fill { height: 100%; background: var(--primary); border-radius: var(--radius-full); }
 
         #install-btn { display: none; }
@@ -927,7 +926,6 @@
             .toolbar .form-control { max-width: 100%; flex: 1; }
             .toolbar .toolbar-filters { width: 100%; }
 
-            /* Mobile image upload — susun menegak */
             .image-upload-wrap { gap: 10px; padding: 8px; }
             .image-preview-box { width: 80px; height: 80px; }
         }
@@ -945,9 +943,6 @@
 
         /* ═══════════════════════════════════════════════════════════
            ═══ AUTO-HIDE SIDEBAR (POS VIEW) ═══
-           Bila buka POS, sidebar auto-tutup untuk beri ruang lebih.
-           User tetap boleh buka sidebar via butang ☰.
-           Desktop besar (≥1440px) kekal tunjuk sidebar.
            ═══════════════════════════════════════════════════════════ */
         body.pos-view-active .sidebar:not(.active) {
             transform: translateX(-100%);
@@ -965,7 +960,6 @@
             transform: translateX(0);
         }
 
-        /* Tablet (iPad Air, Android tablet, dll.) — sidebar jadi overlay */
         @media (min-width: 1024px) and (max-width: 1439px) {
             body.pos-view-active .sidebar {
                 width: 82vw;
@@ -974,7 +968,6 @@
             }
         }
 
-        /* Desktop besar — kekalkan sidebar terbuka walaupun dalam POS */
         @media (min-width: 1440px) {
             body.pos-view-active .sidebar:not(.active) {
                 transform: translateX(0);
@@ -1099,7 +1092,7 @@
                         <div><div class="stat-val" id="dash-total-items">0</div><div class="stat-label">Total Items</div></div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon" style="background: #e0f2fe; color: #0284c7;">📥</div>
+                        <div class="stat-icon" style="background: #fce7f3; color: #be185d;">📥</div>
                         <div><div class="stat-val" id="dash-received">0</div><div class="stat-label">Items Received</div></div>
                     </div>
                     <div class="stat-card">
@@ -1454,8 +1447,7 @@
         }
 
         /* ═══════════════════════════════════════════════
-           IMAGE COMPRESSION HELPER (BARU)
-           Convert file → base64 (dimampatkan)
+           IMAGE COMPRESSION HELPER
            ═══════════════════════════════════════════════ */
         function compressImage(file, maxSize = 400, quality = 0.7) {
             return new Promise((resolve, reject) => {
@@ -1479,7 +1471,6 @@
                             canvas.width = width;
                             canvas.height = height;
                             const ctx = canvas.getContext('2d');
-                            // Background putih (untuk PNG transparent → JPEG)
                             ctx.fillStyle = '#ffffff';
                             ctx.fillRect(0, 0, width, height);
                             ctx.drawImage(img, 0, 0, width, height);
@@ -1493,7 +1484,6 @@
             });
         }
 
-        // Return HTML untuk thumbnail (atau placeholder)
         function itemThumbHTML(imageData, alt = '') {
             if (imageData) {
                 return `<img src="${esc(imageData)}" class="item-thumb" alt="${esc(alt)}" loading="lazy">`;
@@ -1698,7 +1688,6 @@
             State.cart = [];
             document.getElementById('login-form').reset();
             updateUserUI(null);
-            // ═══ AUTO-HIDE SIDEBAR: reset kelas bila log keluar ═══
             document.body.classList.remove('pos-view-active');
             closeSidebarMobile();
         });
@@ -1733,7 +1722,6 @@
                 document.getElementById(`view-${viewTarget}`)?.classList.add('active');
                 document.getElementById('page-title').textContent = PAGE_TITLES[viewTarget] || 'Dashboard';
 
-                // ═══ AUTO-HIDE SIDEBAR: toggle kelas bila buka POS ═══
                 document.body.classList.toggle('pos-view-active', viewTarget === 'pos');
 
                 closeSidebarMobile();
@@ -1927,7 +1915,7 @@
                     price: item.price,
                     qty: 1,
                     subtotal: item.price,
-                    imageData: item.imageData || null  // ← snapshot gambar masa add
+                    imageData: item.imageData || null
                 });
             }
             renderPOS();
@@ -2124,7 +2112,6 @@
             });
             Storage.saveItems(items);
 
-            // Simpan snapshot items dalam transaction (tanpa imageData untuk jimat saiz DB)
             const txItems = State.cart.map(c => ({
                 itemId: c.itemId,
                 name: c.name,
@@ -2158,7 +2145,7 @@
             const status = tx.status || 'COMPLETED';
             let statusBanner = '';
             if (status === 'CANCELLED') statusBanner = `<div style="background:#fef2f2; color:#dc2626; padding:10px; border-radius:8px; text-align:center; font-weight:800; margin-bottom:1rem; border:2px dashed #dc2626;">❌ TRANSAKSI DIBATALKAN<br><span style="font-size:0.75rem; font-weight:600;">${esc(tx.cancelReason || '')}</span></div>`;
-            else if (status === 'REFUNDED') statusBanner = `<div style="background:#fce7f3; color:#db2777; padding:10px; border-radius:8px; text-align:center; font-weight:800; margin-bottom:1rem; border:2px dashed #db2777;">💸 TRANSAKSI DIPULANGKAN<br><span style="font-size:0.75rem; font-weight:600;">${esc(tx.cancelReason || '')}</span></div>`;
+            else if (status === 'REFUNDED') statusBanner = `<div style="background:#fce7f3; color:#be185d; padding:10px; border-radius:8px; text-align:center; font-weight:800; margin-bottom:1rem; border:2px dashed #be185d;">💸 TRANSAKSI DIPULANGKAN<br><span style="font-size:0.75rem; font-weight:600;">${esc(tx.cancelReason || '')}</span></div>`;
 
             openModal({
                 title: 'Resit Pembelian',
@@ -2210,7 +2197,7 @@
                         <div style="font-weight: 800; color: var(--danger); margin-bottom: 4px;">⚠️ Amaran</div>
                         <div style="font-size: 0.85rem;">Stok untuk semua item akan <b>dipulangkan semula</b>.</div>
                     </div>
-                    <div style="margin-bottom: 1rem; padding: 0.85rem; background: #f8fafc; border-radius: var(--radius-md); font-size: 0.88rem;">
+                    <div style="margin-bottom: 1rem; padding: 0.85rem; background: #fdf6fb; border-radius: var(--radius-md); font-size: 0.88rem;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Resit:</span><b>${esc(tx.receiptNumber)}</b></div>
                         <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Jumlah:</span><b>${fmtRM(tx.total)}</b></div>
                         <div style="display:flex; justify-content:space-between;"><span>Tarikh:</span><b>${new Date(tx.date).toLocaleString()}</b></div>
@@ -2274,7 +2261,7 @@
                             Stok item <b>TIDAK</b> akan dipulihkan.
                         </div>
                     </div>
-                    <div style="margin-bottom: 1rem; padding: 0.85rem; background: #f8fafc; border-radius: var(--radius-md); font-size: 0.88rem;">
+                    <div style="margin-bottom: 1rem; padding: 0.85rem; background: #fdf6fb; border-radius: var(--radius-md); font-size: 0.88rem;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Jumlah transaksi:</span><b>${txs.length}</b></div>
                         <div style="display:flex; justify-content:space-between;"><span>Jumlah nilai:</span><b>${fmtRM(txs.reduce((s, t) => s + (t.total || 0), 0))}</b></div>
                     </div>
@@ -2438,9 +2425,9 @@
         }
 
         /* ═══════════════════════════════════════════════
-           ITEM MANAGEMENT (dengan gambar base64)
+           ITEM MANAGEMENT
            ═══════════════════════════════════════════════ */
-        let _currentItemImageData = null;  // simpan base64 sementara semasa modal terbuka
+        let _currentItemImageData = null;
 
         function renderItems() {
             const items = Storage.getItems();
@@ -2504,7 +2491,6 @@
         document.getElementById('item-search').addEventListener('input', debounce(renderItems, 150));
         document.getElementById('item-vendor-filter').addEventListener('change', renderItems);
 
-        // HTML untuk section image upload (dipakai dalam add & edit modal)
         function imageUploadHTML() {
             return `
                 <div class="form-group">
@@ -2525,7 +2511,6 @@
                 </div>`;
         }
 
-        // Set preview + bind events (dipanggil selepas modal dibuka)
         function bindImageUpload() {
             const previewEl = document.getElementById('i-image-preview');
             const fileInput = document.getElementById('i-image-input');
@@ -2559,7 +2544,7 @@
                 } finally {
                     pickBtn.disabled = false;
                     pickBtn.textContent = oldTxt;
-                    fileInput.value = ''; // reset supaya boleh pilih fail sama semula
+                    fileInput.value = '';
                 }
             });
 
