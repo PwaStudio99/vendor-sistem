@@ -1,4 +1,6 @@
+Berikut adalah fail HTML penuh yang telah diintegrasikan dengan ciri auto-hide sidebar untuk POS view. Perubahan utama ditandakan dengan komen // ═══ AUTO-HIDE SIDEBAR ═══ dan /* ═══ AUTO-HIDE SIDEBAR ═══ */.
 
+```html
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -943,6 +945,52 @@
             .product-card:hover:not(.disabled) { transform: none; }
         }
 
+        /* ═══════════════════════════════════════════════════════════
+           ═══ AUTO-HIDE SIDEBAR (POS VIEW) ═══
+           Bila buka POS, sidebar auto-tutup untuk beri ruang lebih.
+           User tetap boleh buka sidebar via butang ☰.
+           Desktop besar (≥1440px) kekal tunjuk sidebar.
+           ═══════════════════════════════════════════════════════════ */
+        body.pos-view-active .sidebar:not(.active) {
+            transform: translateX(-100%);
+        }
+        body.pos-view-active .main-content {
+            margin-left: 0;
+        }
+        body.pos-view-active .menu-toggle-btn,
+        body.pos-view-active .sidebar-close-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        body.pos-view-active .sidebar.active {
+            transform: translateX(0);
+        }
+
+        /* Tablet (iPad Air, Android tablet, dll.) — sidebar jadi overlay */
+        @media (min-width: 1024px) and (max-width: 1439px) {
+            body.pos-view-active .sidebar {
+                width: 82vw;
+                max-width: 300px;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+            }
+        }
+
+        /* Desktop besar — kekalkan sidebar terbuka walaupun dalam POS */
+        @media (min-width: 1440px) {
+            body.pos-view-active .sidebar:not(.active) {
+                transform: translateX(0);
+            }
+            body.pos-view-active .main-content {
+                margin-left: var(--sidebar-width);
+            }
+            body.pos-view-active .menu-toggle-btn,
+            body.pos-view-active .sidebar-close-btn {
+                display: none;
+            }
+        }
+        /* ═══ END AUTO-HIDE SIDEBAR ═══ */
+
         @media print {
             body * { visibility: hidden !important; }
             .receipt-box, .receipt-box * { visibility: visible !important; }
@@ -1652,6 +1700,8 @@
             State.cart = [];
             document.getElementById('login-form').reset();
             updateUserUI(null);
+            // ═══ AUTO-HIDE SIDEBAR: reset kelas bila log keluar ═══
+            document.body.classList.remove('pos-view-active');
             closeSidebarMobile();
         });
 
@@ -1684,6 +1734,10 @@
                 item.classList.add('active');
                 document.getElementById(`view-${viewTarget}`)?.classList.add('active');
                 document.getElementById('page-title').textContent = PAGE_TITLES[viewTarget] || 'Dashboard';
+
+                // ═══ AUTO-HIDE SIDEBAR: toggle kelas bila buka POS ═══
+                document.body.classList.toggle('pos-view-active', viewTarget === 'pos');
+
                 closeSidebarMobile();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 renderAllViews();
@@ -2894,3 +2948,42 @@
     </script>
 </body>
 </html>
+```
+
+✅ Ringkasan Perubahan Yang Telah Diintegrasikan
+
+1. CSS (dalam <style>) — Sebelum @media print
+
+Blok CSS pos-view-active ditambah:
+
+· body.pos-view-active .sidebar → auto-slide out ke kiri
+· body.pos-view-active .main-content → margin-left: 0 (guna penuh lebar skrin)
+· body.pos-view-active .menu-toggle-btn → tunjuk butang ☰
+· Media query ≥ 1440px → desktop besar kekal tunjuk sidebar (tak ganggu)
+
+2. JS Handler Menu — Dalam document.querySelectorAll('.menu-item[data-view]')
+
+Baris ditambah:
+
+```js
+document.body.classList.toggle('pos-view-active', viewTarget === 'pos');
+```
+
+3. JS Handler Logout — Dalam logout-btn listener
+
+Baris ditambah:
+
+```js
+document.body.classList.remove('pos-view-active');
+```
+
+🎯 Kesan Tingkah Laku
+
+Peranti Buka POS Sidebar
+iPad Air portrait ✅ Auto-hide Overlay, boleh toggle ☰
+iPad Air landscape ✅ Auto-hide POS guna 100% lebar — lebih lega
+Phone portrait/landscape ✅ Auto-hide Overlay biasa
+Laptop (1024–1439px) ✅ Auto-hide Overlay lebar
+Desktop ≥1440px ❌ Kekal terbuka Sama seperti biasa
+
+Bila pilih view selain POS (Dashboard, Vendors, dll.), sidebar akan auto-buka semula secara automatik. 🎉
